@@ -61,42 +61,51 @@ theta = math.pi/6.0
 
 ramp  = box( opacity=0.5, pos=vec(0, 0, 0), axis = vec(math.cos(theta), math.sin(theta), 0), length =4, height=0.5, width=4, color=color.cyan)
 brick = box( opacity=0.5, pos=vec(-0.5*math.sin(theta), 0.5*math.cos(theta), 0), axis = vec(math.cos(theta), math.sin(theta), 0), length=0.5, height=0.5, width=0.5, color=color.red)
-print("What forces are acting on block?")
-user_input = input()
-scene.caption = user_input
+print("What forces are acting on block? Press Enter after describing each force and type Exit and press Enter when finished.")
+while(True):
+   user_input = input()
+   if user_input=="Exit":
+      break
+   scene.caption = user_input
 
-# check response against stored embedded vectors
-retrieved_knowledge = retrieve(user_input)
-for chunk, similarity in retrieved_knowledge:
-  print(f' - (similarity: {similarity:.2f}) {chunk}')
+   # check response against stored embedded vectors
+   retrieved_knowledge = retrieve(user_input)
+   chunk, similarity = retrieved_knowledge[0]
+   print(f' - (similarity: {similarity:.2f}) {chunk}')
 
 wt = arrow(shaftwidth=0.05, pos=vec(-0.5*math.sin(theta), 0.5*math.cos(theta), 0), axis=vec(0, -4, 0), round = True, color=color.orange)
+fr = arrow(shaftwidth=0.05, pos=vec(-0.25*math.sin(theta), 0.25*math.cos(theta), 0), axis = vec(4*math.cos(theta),4* math.sin(theta), 0), round = True, color=color.orange)
+r  = arrow(shaftwidth=0.05, pos=vec(-0.25*math.sin(theta), 0.25*math.cos(theta), 0), axis=vec(-4*math.sin(theta), 4*math.cos(theta), 0), round = True, color=color.orange)
+
+wt_l = label(align='left', xoffset = 20, line=False, pos=vec(-0.5*math.sin(theta), 0.5*math.cos(theta)-4, 0), text='Weight', box=False)
+fr_l = label(align='left', xoffset = 20, line=False, pos=vec(-0.25*math.sin(theta)+4*math.cos(theta), 0.25*math.cos(theta)+4* math.sin(theta), 0), text='Friction', box=False)
+r_l  = label(align='left', xoffset = 20, line=False, pos=vec(-0.25*math.sin(theta)-4*math.sin(theta), 0.25*math.cos(theta)+4* math.cos(theta), 0), text='Reaction', box=False)
 
 # deepseek  answer
 client = OpenAI(
   base_url="https://openrouter.ai/api/v1",
-  api_key="API_KEY",
+  api_key="<API_KEY>",
 )
-#messages = [{"role": "user", "content": "Solve this problem.  "+p}]
-#response = client.chat.completions.create(
-#    model="deepseek/deepseek-r1:free",
-#    messages=messages
-#)
+messages = [{"role": "user", "content": "Solve this problem.  "+p}]
+response = client.chat.completions.create(
+    model="deepseek/deepseek-r1:free",
+    messages=messages
+)
 
-#messages.append(response.choices[0].message)
-#print(response.choices[0].message.content)
-#scene.caption = str(response.choices[0].message.content) 
-#user_input = input()
+messages.append(response.choices[0].message)
+print(response.choices[0].message.content)
+scene.caption = str(response.choices[0].message.content) 
+user_input = input()
 
 # ask socratic questions about this problem 
-#messages = [{"role": "user", "content": "Ask socratic questions about this problem"}]
+messages = [{"role": "user", "content": "Ask socratic questions about this problem"}]
 #
-#response = client.chat.completions.create(
-#    model="deepseek/deepseek-r1:free",
-#    messages=messages
-#)
+response = client.chat.completions.create(
+    model="deepseek/deepseek-r1:free",
+    messages=messages
+)
 
-#messages.append(response.choices[0].message)
-#
-#print(response.choices[0].message.content)
-#scene.caption = str(response.choices[0].message.content)
+messages.append(response.choices[0].message)
+
+print(response.choices[0].message.content)
+scene.caption = str(response.choices[0].message.content)

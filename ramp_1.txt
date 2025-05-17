@@ -1,1 +1,3 @@
 weight mg acting vertically downwards
+reaction acting upwards normal to plane
+friction acting upwards parallel to slope
