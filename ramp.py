@@ -82,30 +82,24 @@ fr_l = label(align='left', xoffset = 20, line=False, pos=vec(-0.25*math.sin(thet
 r_l  = label(align='left', xoffset = 20, line=False, pos=vec(-0.25*math.sin(theta)-4*math.sin(theta), 0.25*math.cos(theta)+4* math.cos(theta), 0), text='Reaction', box=False)
 
 # deepseek  answer
-client = OpenAI(
-  base_url="https://openrouter.ai/api/v1",
-  api_key="<API_KEY>",
-)
-messages = [{"role": "user", "content": "Solve this problem.  "+p}]
-response = client.chat.completions.create(
-    model="deepseek/deepseek-r1:free",
-    messages=messages
-)
-
-messages.append(response.choices[0].message)
-print(response.choices[0].message.content)
-scene.caption = str(response.choices[0].message.content) 
+m = [{"role": "user", "content": p}]
+response = ollama.chat(
+        model="deepseek-r1",
+        messages=m
+    )
+print(response["message"]["content"])
+p=p+response["message"]["content"]
+scene.caption = str(response["message"]["content"]) 
+print("Enter to generate socratic questions")
 user_input = input()
+p = " Ask socratic questions about a block stationary on a ramp. Only ask socratic questions and do not answer any of these questions. Output should be a numbered list of questions."
+m = [{"role": "user", "content": p}]
 
 # ask socratic questions about this problem 
-messages = [{"role": "user", "content": "Ask socratic questions about this problem"}]
-#
-response = client.chat.completions.create(
-    model="deepseek/deepseek-r1:free",
-    messages=messages
-)
+response = ollama.chat(
+        model="deepseek-r1",
+        messages=m
+    )
 
-messages.append(response.choices[0].message)
-
-print(response.choices[0].message.content)
-scene.caption = str(response.choices[0].message.content)
+print(response["message"]["content"])
+scene.caption = str(response["message"]["content"])
