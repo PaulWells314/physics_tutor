@@ -46,6 +46,15 @@ def retrieve(query, top_n=3):
   # finally, return the top N most relevant chunks
   return similarities[:top_n]
 
+def filter_out_think(text):
+  s = "</think>"
+  index = text.find(s)
+  if index != -1:
+    filtered = text[index+len(s):]
+  else:
+    filtered = text
+  return filtered
+
 scene.width = scene.height = 600
 scene.range = 5 
 scene.title = "Block on ramp"
@@ -87,9 +96,8 @@ response = ollama.chat(
         model="deepseek-r1",
         messages=m
     )
-print(response["message"]["content"])
-p=p+response["message"]["content"]
-scene.caption = str(response["message"]["content"]) 
+r = filter_out_think(response["message"]["content"])
+scene.caption = r 
 print("Enter to generate socratic questions")
 user_input = input()
 p = " Ask socratic questions about a block stationary on a ramp. Only ask socratic questions and do not answer any of these questions. Output should be a numbered list of questions."
@@ -100,6 +108,6 @@ response = ollama.chat(
         model="deepseek-r1",
         messages=m
     )
-
-print(response["message"]["content"])
-scene.caption = str(response["message"]["content"])
+r = filter_out_think(response["message"]["content"])
+scene.caption = r 
+print(r)
