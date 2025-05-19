@@ -3,6 +3,7 @@ from openai import OpenAI
 import math
 import sys
 import ollama
+import time
 
 # Load the dataset
 
@@ -59,9 +60,24 @@ scene.width = scene.height = 600
 scene.range = 5 
 scene.title = "Block on ramp"
 scene.up    = vec(0, 1, 0)
+# ask socratic questions about this problem 
+def socratic_event(evt):
+   p = " Ask socratic questions about a block stationary on a ramp. Only ask socratic questions and do not answer any of these questions. Output should be a numbered list of questions."
+   m = [{"role": "user", "content": p}]
+   r = "Waiting for ai..."
+   scene.caption = r 
+   response = ollama.chat(
+        model="deepseek-r1",
+        messages=m
+    )
+   r = filter_out_think(response["message"]["content"])
+   scene.caption = r 
+
+soc_button = button(bind=socratic_event, text="Socratic", pos=scene.title_anchor)
 
 p = "A block is stationary on a ramp. The ramp is at an angle of 30 degrees to the horizontal. The block is resting unattached on the ramp.\n"
 p +="What forces are acting on the block? Give the magnitude and direction for each force. Introduce and define symbols for any undefined quantities. \n" 
+p +="One entry per force.  Type quit after last force. \n"
 
 scene.caption = p
 
@@ -71,20 +87,27 @@ theta = math.pi/6.0
 ramp  = box( opacity=0.5, pos=vec(0, 0, 0), axis = vec(math.cos(theta), math.sin(theta), 0), length =4, height=0.5, width=4, color=color.cyan)
 brick = box( opacity=0.5, pos=vec(-0.5*math.sin(theta), 0.5*math.cos(theta), 0), axis = vec(math.cos(theta), math.sin(theta), 0), length=0.5, height=0.5, width=0.5, color=color.red)
 print("What forces are acting on block? Press Enter after describing each force and type Exit and press Enter when finished.")
-while(True):
-   user_input = input()
-   if user_input=="Exit":
-      break
-   scene.caption = user_input
-
-   # check response against stored embedded vectors
-   retrieved_knowledge = retrieve(user_input)
-   chunk, similarity = retrieved_knowledge[0]
-   print(f' - (similarity: {similarity:.2f}) {chunk}')
+user_input=[]
+def inp_func(evt):
+   user_input.append(evt.text);
+   evt.text=""
+   return
+inp   = winput(bind = inp_func, type='string', width =300, _height=200)
+while len(user_input) == 0 or user_input[-1] != 'quit':
+   time.sleep(1)
+r=""
+for u in user_input:
+   if u !='quit':
+      # check response against stored embedded vectors
+      retrieved_knowledge = retrieve(u)
+      chunk, similarity = retrieved_knowledge[0]
+      print(f' - (similarity: {similarity:.2f}) {chunk}')
+      r+=f' - (similarity: {similarity:.2f}) {chunk}'
+scene.caption=r
 
 wt = arrow(shaftwidth=0.05, pos=vec(-0.5*math.sin(theta), 0.5*math.cos(theta), 0), axis=vec(0, -4, 0), round = True, color=color.orange)
 fr = arrow(shaftwidth=0.05, pos=vec(-0.25*math.sin(theta), 0.25*math.cos(theta), 0), axis = vec(4*math.cos(theta),4* math.sin(theta), 0), round = True, color=color.orange)
-r  = arrow(shaftwidth=0.05, pos=vec(-0.25*math.sin(theta), 0.25*math.cos(theta), 0), axis=vec(-4*math.sin(theta), 4*math.cos(theta), 0), round = True, color=color.orange)
+react  = arrow(shaftwidth=0.05, pos=vec(-0.25*math.sin(theta), 0.25*math.cos(theta), 0), axis=vec(-4*math.sin(theta), 4*math.cos(theta), 0), round = True, color=color.orange)
 
 wt_l = label(align='left', xoffset = 20, line=False, pos=vec(-0.5*math.sin(theta), 0.5*math.cos(theta)-4, 0), text='Weight', box=False)
 fr_l = label(align='left', xoffset = 20, line=False, pos=vec(-0.25*math.sin(theta)+4*math.cos(theta), 0.25*math.cos(theta)+4* math.sin(theta), 0), text='Friction', box=False)
@@ -98,16 +121,6 @@ response = ollama.chat(
     )
 r = filter_out_think(response["message"]["content"])
 scene.caption = r 
-print("Enter to generate socratic questions")
-user_input = input()
-p = " Ask socratic questions about a block stationary on a ramp. Only ask socratic questions and do not answer any of these questions. Output should be a numbered list of questions."
-m = [{"role": "user", "content": p}]
+while True:
+   time.sleep(1)
 
-# ask socratic questions about this problem 
-response = ollama.chat(
-        model="deepseek-r1",
-        messages=m
-    )
-r = filter_out_think(response["message"]["content"])
-scene.caption = r 
-print(r)
