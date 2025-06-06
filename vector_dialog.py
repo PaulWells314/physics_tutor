@@ -55,19 +55,29 @@ if len(sys.argv) != 2:
 with open(sys.argv[1]) as fin:
    data = json.load(fin)
 for obj in data:
-   print(obj["request"])
-   vector_db = []
-   # Add all possible model responses to request to vector database
-   for response_item in obj["response"]:
-      vector_db = add_chunk_to_database(response_item, vector_db)
-   # Ask user for responses. One line per response
-   user_responses = []
-   print("Input response. Enter q to finish")
-   while True:
-      user_str = input()
-      if user_str == "q":
-         break
-      user_responses.append(user_str)
-   similarities, perm = retrieve_max_permutation(user_responses, vector_db)
-   for idx, resp in enumerate(user_responses):
-      print("student: {0} ai: {1} score: {2:1.3f}".format(resp, obj["response"][perm[idx]], similarities[idx]))
+   if "description" in obj:
+      print(obj["description"])
+      print("")
+   if "request" in obj:
+      print(obj["request"])
+   if "response" in obj:
+      vector_db = []
+      # Add all possible model responses to request to vector database
+      for response_item in obj["response"]:
+         vector_db = add_chunk_to_database(response_item, vector_db)
+      # Ask user for responses. One line per response
+      user_responses = []
+      print("Input response. Enter q to finish")
+      while True:
+         user_str = input()
+         if user_str == "q":
+            break
+         user_responses.append(user_str)
+      similarities, perm = retrieve_max_permutation(user_responses, vector_db)
+      for idx, resp in enumerate(user_responses):
+         print("student: {0} ai: {1} score: {2:1.3f}".format(resp, obj["response"][perm[idx]], similarities[idx]))
+      # Missing user responses?
+      if len(user_responses) < len(vector_db):
+         for idx in range(len(user_responses), len(vector_db)):
+            print("missing response: {0}".format(obj["response"][perm[idx]]))
+
