@@ -1,0 +1,19 @@
+[
+   {
+      "request": "What is the first step?",
+      "response": ["Draw a diagram of ramp with labels"]
+   },
+   {
+      "request": "What is the next step?",
+      "response": ["Draw a free body diagram for the block"]
+   },
+   {  "request": "What are forces acting on block?",
+      "response": 
+      [
+      "Weight mg acting down",
+      "Friction acting upwards parallel to the slope",
+      "Reaction normal to slope"
+      ],
+      "type": "all"
+   } 
+]
