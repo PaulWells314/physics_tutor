@@ -23,6 +23,20 @@ def cosine_similarity(a, b):
   norm_b = sum([x ** 2 for x in b]) ** 0.5
   return dot_product / (norm_a * norm_b)
 
+# Calculate best match of single query vector against list of reference vectors 
+def retrieve_best_match(query, vector_db):
+  query_embedding = ollama.embed(model=EMBEDDING_MODEL, input=query)['embeddings'][0]
+  max_similarity = -1
+  max_idx        = -1
+  for idx in range(len(vector_db)):
+     similarity = 0
+     chunk, embedding = vector_db[idx]
+     similarity = cosine_similarity(query_embedding, embedding)
+     if similarity > max_similarity:
+        max_similarity = similarity
+        max_idx =  idx
+  return max_similarity, max_idx 
+
 # Calculating for every permulation is unbiased but slow.
 # Should probably limit number of responses or use different algorithm for large number of responses.
 def retrieve_max_permutation(queries, vector_db):
@@ -54,30 +68,44 @@ if len(sys.argv) != 2:
    sys.exit()
 with open(sys.argv[1]) as fin:
    data = json.load(fin)
+req_type = ""
 for obj in data:
    if "description" in obj:
+      print("")
       print(obj["description"])
       print("")
    if "request" in obj:
       print(obj["request"])
-   if "response" in obj:
+   if "type" in obj:
+      req_type= obj["type"]
+   if "responses" in obj:
       vector_db = []
-      # Add all possible model responses to request to vector database
-      for response_item in obj["response"]:
-         vector_db = add_chunk_to_database(response_item, vector_db)
-      # Ask user for responses. One line per response
-      user_responses = []
-      print("Input response. Enter q to finish")
-      while True:
+      if req_type=="all":
+         # Add all possible model responses to request to vector database
+         for response_item in obj["responses"]:
+            vector_db = add_chunk_to_database(response_item, vector_db)
+         # Ask user for responses. One line per response
+         user_responses = []
+         print("Input response. Enter q to finish")
+         while True:
+            user_str = input()
+            if user_str == "q":
+               break
+            user_responses.append(user_str)
+         similarities, perm = retrieve_max_permutation(user_responses, vector_db)
+         for idx, resp in enumerate(user_responses):
+            print("student: {0} ai: {1} score: {2:1.3f}".format(resp, obj["responses"][perm[idx]], similarities[idx]))
+         # Missing user responses?
+         if len(user_responses) < len(vector_db):
+            for idx in range(len(user_responses), len(vector_db)):
+               print("missing response: {0}".format(obj["responses"][perm[idx]]))
+      # Find best match for single input (which may not be best answer!) and make comment
+      if req_type=="paint":
+         for response in obj["responses"]:
+            response_text    = response["text"]
+            response_comment = response["comment"]
+            response_mask    = response["mask"] 
+            vector_db = add_chunk_to_database(response_text, vector_db)
          user_str = input()
-         if user_str == "q":
-            break
-         user_responses.append(user_str)
-      similarities, perm = retrieve_max_permutation(user_responses, vector_db)
-      for idx, resp in enumerate(user_responses):
-         print("student: {0} ai: {1} score: {2:1.3f}".format(resp, obj["response"][perm[idx]], similarities[idx]))
-      # Missing user responses?
-      if len(user_responses) < len(vector_db):
-         for idx in range(len(user_responses), len(vector_db)):
-            print("missing response: {0}".format(obj["response"][perm[idx]]))
-
+         similarity, idx = retrieve_best_match(user_str, vector_db)
+         print(obj["responses"][idx]["comment"])
