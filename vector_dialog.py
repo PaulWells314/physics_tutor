@@ -86,12 +86,18 @@ for obj in data:
             vector_db = add_chunk_to_database(response_item, vector_db)
          # Ask user for responses. One line per response
          user_responses = []
-         print("Input response. Enter q to finish")
+         if len(obj["responses"]) == 1:
+            print("Input response (single line answer).")
+         else:
+            print("Input responses (1 line per response). Enter q to finish")
          while True:
             user_str = input()
             if user_str == "q":
                break
             user_responses.append(user_str)
+            # single line answer?
+            if len(obj["responses"]) == 1:
+               break
          similarities, perm = retrieve_max_permutation(user_responses, vector_db)
          for idx, resp in enumerate(user_responses):
             print("student: {0} ai: {1} score: {2:1.3f}".format(resp, obj["responses"][perm[idx]], similarities[idx]))

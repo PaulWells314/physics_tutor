@@ -1,6 +1,6 @@
 [
    {
-      "description": "A block is resting stationary on a ramp. What forces are acting on the block?"
+      "description": "A block of mass m is resting stationary on a ramp. What forces are acting on the block?"
    }, 
    {
       "request": "What is the first step?",
@@ -25,6 +25,7 @@
    {
       "request": "What is the next step?",
       "type": "paint",
+      "total_mask": "0x7",
       "responses":
       [
          {
@@ -41,6 +42,16 @@
             "text": "Resolve forces perpendicular to ramp",
             "comment": "Good... but what else?",
             "mask": "0x6"
+         },    
+         {
+            "text": "Resolve forces horizontally",
+            "comment": "Makes calculation more difficult because need to resolve both friction and normal reaction along horizontal",
+            "mask": "0x4"
+         },   
+         {
+            "text": "Resolve forces vertically",
+            "comment": "Makes calculation more difficult because need to resolve both friction and normal reaction along vertical",
+            "mask": "0x4"
          }    
       ]
    }
