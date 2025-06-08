@@ -52,6 +52,11 @@
             "text": "Resolve forces vertically",
             "comment": "Makes calculation more difficult because need to resolve both friction and normal reaction along vertical",
             "mask": "0x4"
+         },    
+         {
+            "text": "Resolve forces",
+            "comment": "Resolve forces in what directions?",
+            "mask": "0x4"
          }    
       ]
    }
