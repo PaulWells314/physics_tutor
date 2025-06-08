@@ -9,6 +9,7 @@ import sys
 import ollama
 import time
 from itertools import permutations
+import argparse
 
 EMBEDDING_MODEL = 'hf.co/CompendiumLabs/bge-base-en-v1.5-gguf'
 
@@ -63,10 +64,12 @@ def retrieve_max_permutation(queries, vector_db):
   return similarities, max_p
 
 # Load all requests and model responses from json file
-if len(sys.argv) != 2:
-   print("Use: python vector_dialog.py <json file path>")
-   sys.exit()
-with open(sys.argv[1]) as fin:
+parser = argparse.ArgumentParser()
+parser.add_argument("json_file")
+parser.add_argument("-r", "--repeat", help="repeat question if wrong or partial answer given", action="store_true")
+args = parser.parse_args()
+print(args.json_file)
+with open(args.json_file) as fin:
    data = json.load(fin)
 req_type = ""
 for obj in data:
@@ -112,6 +115,9 @@ for obj in data:
             response_comment = response["comment"]
             response_mask    = response["mask"] 
             vector_db = add_chunk_to_database(response_text, vector_db)
-         user_str = input()
-         similarity, idx = retrieve_best_match(user_str, vector_db)
-         print(obj["responses"][idx]["comment"])
+         while True:
+            user_str = input()
+            similarity, idx = retrieve_best_match(user_str, vector_db)
+            print(obj["responses"][idx]["comment"])
+            if (args.repeat == False) or user_str=="q" or obj["responses"][idx]["mask"] == obj["total_mask"]:
+               break
