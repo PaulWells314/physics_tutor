@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1> AI Physics Tutor </h1>
+
+<p><label>Problem: </label><p>
+
+<textarea rows="5"  cols="80" readonly>
+{{ problem_txt }}
+</textarea>
+
+<p><label>Question: </label><p>
+
+<textarea rows="5"  cols="80">
+{{ question_txt }}
+</textarea>
+
+<p><label>Response: </label><p>
+<form method = "post">
+<textarea name="text" rows="5"  cols="80">
+</textarea>
+<input type="submit" value="Submit">
+</form>
+{% if text %}
+   <h2> Feedback: </h2>
+   <p>{{ text }} </p>
+{% endif %}
+</body>
+</html>
