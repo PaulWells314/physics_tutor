@@ -7,24 +7,26 @@
 <p><label>Problem: </label><p>
 
 <textarea rows="5"  cols="80" readonly>
-{{ problem_txt }}
+{{ context['problem_txt'] }}
 </textarea>
 
 <p><label>Question: </label><p>
 
 <textarea rows="5"  cols="80">
-{{ question_txt }}
+{{ context['request_txt'] }}
 </textarea>
 
 <p><label>Response: </label><p>
 <form method = "post">
-<textarea name="text" rows="5"  cols="80">
+<textarea name="response_text" rows="5"  cols="80">
+{{ context['response_txt'] }}
 </textarea>
 <input type="submit" value="Submit">
 </form>
-{% if text %}
-   <h2> Feedback: </h2>
-   <p>{{ text }} </p>
-{% endif %}
+
+<p><label>Feedback: </label><p>
+<textarea rows="5"  cols="80">
+{{ context['comment_txt'] }}
+</textarea>
 </body>
 </html>
