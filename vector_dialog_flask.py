@@ -70,20 +70,39 @@ def hello():
       obj = session['data'][session['obj_index']]
       vector_db = []
       comment_txt=""
-      user_str = session['context']['response_txt']
-      if "responses" in obj: 
-         for response in obj["responses"]:
-            response_text    = response["text"]
-            response_comment = response["comment"]
-            response_mask    = response["mask"]
-            vector_db = add_chunk_to_database(response_text, vector_db)  
-         similarity, idx = retrieve_best_match(user_str, vector_db)
-         comment_txt = obj["responses"][idx]["comment"] 
-         session['context']['comment_txt'] = comment_txt
-         
+      user_str = session['context']['response_txt'].rstrip()
+      req_type = obj["type"]
+      print(user_str)
+      if user_str == 'q':
+         session['obj_index'] = session['obj_index'] + 1
+         obj = session['data'][session['obj_index']]
+         session['context']['request_txt'] = obj["request"] 
+         return render_template('index.html', context = session['context'])
+      if req_type == "all":
+      # Add all possible model responses to request to vector database
+         user_responses = user_str.splitlines() 
+         for response_item in obj["responses"]:
+            vector_db = add_chunk_to_database(response_item, vector_db)
+         similarities, perm = retrieve_max_permutation(user_responses, vector_db)
+         for idx, resp in enumerate(user_responses):
+            comment_txt += "student: {0} ai: {1} score: {2:1.3f}".format(resp, obj["responses"][perm[idx]], similarities[idx])
+         # Missing user responses?
+         if len(user_responses) < len(vector_db):
+            for idx in range(len(user_responses), len(vector_db)):
+               comment_txt += "missing response: {0}".format(obj["responses"][perm[idx]])         
+      if req_type == "paint":
+         if "responses" in obj: 
+            for response in obj["responses"]:
+               response_text    = response["text"]
+               response_comment = response["comment"]
+               response_mask    = response["mask"]
+               vector_db = add_chunk_to_database(response_text, vector_db)  
+            similarity, idx = retrieve_best_match(user_str, vector_db)
+            comment_txt = obj["responses"][idx]["comment"] 
+      session['context']['comment_txt'] = comment_txt
       return render_template('index.html', context = session['context'])
    else:
-      with open("ramp_flask.json") as fin:
+      with open("ramp.json") as fin:
          if 'data' not in session:
             session['data'] = json.load(fin)
             session['obj_index'] = 0 
