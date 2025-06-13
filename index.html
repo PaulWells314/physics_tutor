@@ -1,9 +1,37 @@
 <!DOCTYPE html>
 <html>
+<head>
+<style
+>
+.button-container {
+ margin-top: 10px;
+ display: flex;
+ justify-content: center;
+ gap: 10px;
+}
+
+form {
+ width: 500px;
+ margin: 0 auto;
+ display: flex;
+ flex-direction: column;
+}
+
+button {
+ padding: 10px;
+ width:   100px;
+ border-radius:  8px;
+ border: none;
+ background-color: #4CAF50;
+ color: #fff;
+}
+
+</style>
+</head>
 <body>
 
+<form method = "post">
 <h1> AI Physics Tutor </h1>
-
 <p><label>Problem: </label><p>
 
 <textarea rows="5"  cols="80" readonly>
@@ -17,17 +45,18 @@
 </textarea>
 
 <p><label>Response: </label><p>
-<form method = "post">
 <textarea name="response_text" rows="5"  cols="80">
 {{ context['response_txt'] }}
 </textarea>
-<button type="submit" name="submit_button" value="submit">Submit</button>
-<button type="submit" name="submit_button" value="next">Next</button>
-</form>
 
 <p><label>Feedback: </label><p>
 <textarea rows="5"  cols="80">
 {{ context['comment_txt'] }}
 </textarea>
+<div class="button-container">
+<button type="submit" name="submit_button" value="submit">Submit</button>
+<button type="submit" name="submit_button" value="next">Next</button>
+</div>
+</form>
 </body>
 </html>
