@@ -72,12 +72,14 @@ def hello():
       comment_txt=""
       user_str = session['context']['response_txt'].rstrip()
       req_type = obj["type"]
-      print(user_str)
-      if user_str == 'q':
-         session['obj_index'] = session['obj_index'] + 1
-         obj = session['data'][session['obj_index']]
-         session['context']['request_txt'] = obj["request"] 
-         return render_template('index.html', context = session['context'])
+      if request.form.get('submit_button') == "next":
+         if session['obj_index'] < len(session['data']) - 1:
+            session['obj_index'] = session['obj_index'] + 1
+            obj = session['data'][session['obj_index']]
+            session['context']['request_txt'] = obj["request"]
+         else:
+            session['context']['comment_txt'] = "End of Questions" 
+         return render_template('index.html', context = session['context'])  
       if req_type == "all":
       # Add all possible model responses to request to vector database
          user_responses = user_str.splitlines() 
