@@ -32,6 +32,11 @@ button {
 
 <form method = "post">
 <h1> AI Physics Tutor </h1>
+
+<select name="options" >
+  <option value="ramp.json" selected>Block on Ramp</option>
+  <option value="ramp_string.json">Block with String </option>
+</select>
 <p><label>Problem: </label><p>
 
 <textarea rows="5"  cols="80" readonly>
@@ -39,7 +44,6 @@ button {
 </textarea>
 
 <p><label>Question: </label><p>
-
 <textarea rows="5"  cols="80">
 {{ context['request_txt'] }}
 </textarea>
@@ -54,6 +58,7 @@ button {
 {{ context['comment_txt'] }}
 </textarea>
 <div class="button-container">
+<button type="submit" name="submit_button" value="load">Load</button>
 <button type="submit" name="submit_button" value="submit">Submit</button>
 <button type="submit" name="submit_button" value="next">Next</button>
 </div>

@@ -64,8 +64,27 @@ app = Flask(__name__)
 app.secret_key = 'purple_parrot'
    
 @app.route('/', methods = ['POST', 'GET'])
-def hello():
+def init():
    if request.method == 'POST':
+      selected_option =  request.form.get('options')
+      if request.form.get('submit_button') == "load":
+          with open(selected_option) as fin:
+             session['data'] = json.load(fin)
+             session['obj_index'] = 0
+             session['context'] = {}
+             session['context']['problem_txt'] = ""
+             session['context']['request_txt'] = ""
+             session['context']['response_txt'] = ""
+             session['context']['comment_txt'] = ""
+             session['selected'] = selected_option
+             obj = session['data'][session['obj_index']]
+             if "description" in obj:
+                session['context']['problem_txt'] = obj["description"]
+                session['obj_index'] = session['obj_index'] + 1
+                obj = session['data'][session['obj_index']]
+                if "request" in obj:
+                   session['context']['request_txt'] = obj["request"] 
+             return render_template('index.html', context = session['context'])
       session['context']['response_txt'] = request.form.get('response_text')
       obj = session['data'][session['obj_index']]
       vector_db = []
@@ -104,21 +123,13 @@ def hello():
       session['context']['comment_txt'] = comment_txt
       return render_template('index.html', context = session['context'])
    else:
-      with open("ramp.json") as fin:
-         if 'data' not in session:
-            session['data'] = json.load(fin)
-            session['obj_index'] = 0 
-            session['context'] = {}
-            session['context']['problem_txt'] = ""
-            session['context']['request_txt'] = ""
-            session['context']['response_txt'] = ""
-            session['context']['comment_txt'] = ""
-            obj = session['data'][session['obj_index']]
-            if "description" in obj:
-               session['context']['problem_txt'] = obj["description"] 
-               session['obj_index'] = session['obj_index'] + 1
-               obj = session['data'][session['obj_index']]
-            if "request" in obj:
-               session['context']['request_txt'] = obj["request"] 
+      if 'context' not in session:
+         session['obj_index'] = 0 
+         session['context'] = {}
+         session['context']['problem_txt'] = ""
+         session['context']['request_txt'] = ""
+         session['context']['response_txt'] = ""
+         session['context']['comment_txt'] = ""
+         session['selected'] = ""
             
       return render_template('index.html', context = session['context'])
