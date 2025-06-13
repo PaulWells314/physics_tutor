@@ -85,11 +85,11 @@ def hello():
             vector_db = add_chunk_to_database(response_item, vector_db)
          similarities, perm = retrieve_max_permutation(user_responses, vector_db)
          for idx, resp in enumerate(user_responses):
-            comment_txt += "student: {0} ai: {1} score: {2:1.3f}".format(resp, obj["responses"][perm[idx]], similarities[idx])
+            comment_txt += "student: {0} ai: {1} score: {2:1.3f}\n".format(resp, obj["responses"][perm[idx]], similarities[idx])
          # Missing user responses?
          if len(user_responses) < len(vector_db):
             for idx in range(len(user_responses), len(vector_db)):
-               comment_txt += "missing response: {0}".format(obj["responses"][perm[idx]])         
+               comment_txt += "missing response: {0}\n".format(obj["responses"][perm[idx]])         
       if req_type == "paint":
          if "responses" in obj: 
             for response in obj["responses"]:
