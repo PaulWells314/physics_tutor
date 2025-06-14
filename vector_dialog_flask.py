@@ -8,26 +8,33 @@ import ml
 
 app = Flask(__name__)
 app.secret_key = 'purple_parrot'
+
+def init_context(session):
+    session['context'] = {}
+    session['context']['problem_txt'] = ""
+    session['context']['request_txt'] = ""
+    session['context']['response_txt'] = ""
+    session['context']['comment_txt'] = ""
+    return
    
 @app.route('/', methods = ['POST', 'GET'])
 def init():
    if request.method == 'POST':
       selected_option =  request.form.get('options')
+      # Load button
       if request.form.get('submit_button') == "load":
           with open(selected_option) as fin:
              session['data'] = json.load(fin)
              session['obj_index'] = 0
-             session['context'] = {}
-             session['context']['problem_txt'] = ""
-             session['context']['request_txt'] = ""
-             session['context']['response_txt'] = ""
-             session['context']['comment_txt'] = ""
+             init_context(session)
              session['selected'] = selected_option
              obj = session['data'][session['obj_index']]
+             # Description of problem at start of json
              if "description" in obj:
                 session['context']['problem_txt'] = obj["description"]
                 session['obj_index'] = session['obj_index'] + 1
                 obj = session['data'][session['obj_index']]
+                # First request 
                 if "request" in obj:
                    session['context']['request_txt'] = obj["request"] 
              return render_template('index.html', context = session['context'])
@@ -37,6 +44,7 @@ def init():
       comment_txt=""
       user_str = session['context']['response_txt'].rstrip()
       req_type = obj["type"]
+      # Next button
       if request.form.get('submit_button') == "next":
          if session['obj_index'] < len(session['data']) - 1:
             session['obj_index'] = session['obj_index'] + 1
@@ -44,7 +52,9 @@ def init():
             session['context']['request_txt'] = obj["request"]
          else:
             session['context']['comment_txt'] = "End of Questions" 
-         return render_template('index.html', context = session['context'])  
+         return render_template('index.html', context = session['context'])
+
+      # Submit button  
       if req_type == "all":
       # Add all possible model responses to request to vector database
          user_responses = user_str.splitlines() 
@@ -68,14 +78,10 @@ def init():
             comment_txt = obj["responses"][idx]["comment"] 
       session['context']['comment_txt'] = comment_txt
       return render_template('index.html', context = session['context'])
-   else:
+   elif request.method == "GET":
       if 'context' not in session:
-         session['obj_index'] = 0 
-         session['context'] = {}
-         session['context']['problem_txt'] = ""
-         session['context']['request_txt'] = ""
-         session['context']['response_txt'] = ""
-         session['context']['comment_txt'] = ""
+         session['obj_index'] = 0
+         init_context(session) 
          session['selected'] = ""
             
       return render_template('index.html', context = session['context'])
