@@ -76,8 +76,22 @@ def init():
                vector_db = ml.add_chunk_to_database(response_text, vector_db)  
             similarity, idx = ml.retrieve_best_match(user_str, vector_db)
             comment_txt = obj["responses"][idx]["comment"] 
+      if req_type == "equation":
+      # Add all possible model responses to request to vector database
+         user_responses = user_str.splitlines() 
+         for response_item in obj["equations"]:
+            vector_db = ml.add_chunk_to_database(response_item, vector_db)
+         similarities, perm = ml.retrieve_max_permutation(user_responses, vector_db)
+         for idx, resp in enumerate(user_responses):
+            comment_txt += "student: {0} ai: {1} score: {2:1.3f}\n".format(resp, obj["equations"][perm[idx]], similarities[idx])
+         # Missing user responses?
+         if len(user_responses) < len(vector_db):
+            for idx in range(len(user_responses), len(vector_db)):
+               comment_txt += "missing response: {0}\n".format(obj["responses"][perm[idx]])         
+
       session['context']['comment_txt'] = comment_txt
       return render_template('index.html', context = session['context'])
+
    elif request.method == "GET":
       if 'context' not in session:
          session['obj_index'] = 0
