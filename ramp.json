@@ -61,9 +61,8 @@
       ]
    },
    {
-      "request": "Write an expression for the total force perpendicular to the slope. Take positive sense to be upwards.\n Use symbols from the following list:\n  m = mass, R= normal reaction, g=acceleration due to gravity, F=friction, theta=angle slope makes with horizontal.",
+      "request": "Write an expression for the total force perpendicular to the slope. Take positive sense to be upwards.\n Use symbols from the following list:\n  m = mass, R= normal reaction, g=acceleration due to gravity, F=friction, theta=angle slope makes with horizontal.\nUse * for multiply between symbols.",
       "type": "equation",
-      "symbols": ["m", "R", "g", "F", "theta"],
-      "equations": ["R-mg cos(theta)"]
+      "equation": "R-m*g*cos(theta)"
    }
 ]

@@ -5,6 +5,8 @@ import sys
 import time
 import argparse
 import ml
+import sympy
+from sympy import *
 
 app = Flask(__name__)
 app.secret_key = 'purple_parrot'
@@ -78,17 +80,12 @@ def init():
             comment_txt = obj["responses"][idx]["comment"] 
       if req_type == "equation":
       # Add all possible model responses to request to vector database
-         user_responses = user_str.splitlines() 
-         for response_item in obj["equations"]:
-            vector_db = ml.add_chunk_to_database(response_item, vector_db)
-         similarities, perm = ml.retrieve_max_permutation(user_responses, vector_db)
-         for idx, resp in enumerate(user_responses):
-            comment_txt += "student: {0} ai: {1} score: {2:1.3f}\n".format(resp, obj["equations"][perm[idx]], similarities[idx])
-         # Missing user responses?
-         if len(user_responses) < len(vector_db):
-            for idx in range(len(user_responses), len(vector_db)):
-               comment_txt += "missing response: {0}\n".format(obj["responses"][perm[idx]])         
-
+         user_eqn = sympify(user_str) 
+         ref_eqn  = sympify(obj["equation"])
+         if user_eqn == ref_eqn:
+            comment_txt = "equation matches {0}".format(obj["equation"])
+         else:
+            comment_txt = "equation does not match {0}".format(obj["equation"])
       session['context']['comment_txt'] = comment_txt
       return render_template('index.html', context = session['context'])
 
