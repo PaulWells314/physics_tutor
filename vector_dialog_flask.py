@@ -79,13 +79,18 @@ def init():
             similarity, idx = ml.retrieve_best_match(user_str, vector_db)
             comment_txt = obj["responses"][idx]["comment"] 
       if req_type == "equation":
-      # Add all possible model responses to request to vector database
-         user_eqn = sympify(user_str) 
          ref_eqn  = sympify(obj["equation"])
-         if user_eqn == ref_eqn:
-            comment_txt = "equation matches {0}".format(obj["equation"])
+         try:
+            user_eqn = sympify(user_str) 
+         except SympifyError:
+            comment_txt = "mistake in equation format (need to use * for all multiplies)"
+         except Exception as e:
+            comment_txt = "equation error"
          else:
-            comment_txt = "equation does not match {0}".format(obj["equation"])
+             if 0 == (user_eqn-ref_eqn):
+                comment_txt = "equation matches {0}".format(obj["equation"])
+             else:
+                comment_txt = "equation does not match {0}".format(obj["equation"])
       session['context']['comment_txt'] = comment_txt
       return render_template('index.html', context = session['context'])
 
