@@ -54,6 +54,7 @@ def init():
             session['context']['request_txt'] = obj["request"]
          else:
             session['context']['comment_txt'] = "End of Questions" 
+         session['context']['response_txt'] = ""
          return render_template('index.html', context = session['context'])
 
       # Submit button  
