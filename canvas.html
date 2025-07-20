@@ -23,6 +23,34 @@ function draw_rec(){
    ctx.stroke();
    ctx.restore();
 }
+var x = 0;
+var y = 0;
+var isdrawing = false;
+const canvas = document.getElementById("myCanvas");
+const ctx    = canvas.getContext("2d");
+canvas.addEventListener("mousedown", (e) => {
+   x = e.offsetX;
+   y = e.offsetY;
+   isdrawing = true;
+});
+canvas.addEventListener("mouseup", (e) => {
+   if (isdrawing == true){
+      drawLine(x, y, e.offsetX, e.offsetY);
+      x = 0;
+      y = 0;
+      isdrawing = false;
+   }
+});
+function drawLine(x1, y1, x2, y2){
+   ctx.beginPath();
+   ctx.strokeStyle = "black";
+   ctx.lineWith = 1;
+   ctx.moveTo(x1, y1);
+   ctx.lineTo(x2, y2);
+   ctx.stroke();
+   ctx.closePath();
+} 
+
 </script>
 </body>
 </html> 
