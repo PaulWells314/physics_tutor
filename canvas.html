@@ -48,6 +48,18 @@ function drawLine(x1, y1, x2, y2){
    ctx.moveTo(x1, y1);
    ctx.lineTo(x2, y2);
    ctx.stroke();
+   ctx.save();
+   angle = Math.atan2(y2-y1, x2-x1);
+   ctx.translate(x2, y2);
+   ctx.rotate(angle);
+   ctx.moveTo(0,0);
+   ctx.lineTo(0, -10);
+   ctx.lineTo(15, 0);
+   ctx.lineTo(0, 10);
+   ctx.fillStyle = "rgb(72,72,72)";
+   ctx.stroke();
+   ctx.fill();
+   ctx.restore();
    ctx.closePath();
 } 
 
