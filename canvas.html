@@ -5,6 +5,7 @@
 <p><a href="{{ url_for('init') }}">Home</a></p>
 <canvas id="myCanvas" width="300" height="300" style="border:1px solid grey"></canvas>
 <button onclick="draw_rec()">Draw Problem</button>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
 function draw_rec(){
    var canvas = document.getElementById("myCanvas");
@@ -36,6 +37,13 @@ canvas.addEventListener("mousedown", (e) => {
 canvas.addEventListener("mouseup", (e) => {
    if (isdrawing == true){
       drawLine(x, y, e.offsetX, e.offsetY);
+      var vecString = JSON.stringify( {"x1": x, "y1": y, "x2": e.offsetX, "y2":e.offsetY});
+      $.ajax({
+         url: '/diagram',
+         type: 'POST',
+         contentType: "application/json",
+         data: vecString
+      }); 
       x = 0;
       y = 0;
       isdrawing = false;

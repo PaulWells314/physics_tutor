@@ -114,3 +114,8 @@ def init():
 @app.route('/canvas')
 def canvas():
    return render_template('canvas.html') 
+@app.route('/diagram', methods=['POST'])
+def diagram():
+   data = request.get_json()
+   print(data)
+   return "OK" 
