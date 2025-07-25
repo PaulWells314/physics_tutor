@@ -73,14 +73,14 @@ canvas.addEventListener("mousedown", (e) => {
 });
 canvas.addEventListener("mouseup", (e) => {
    if (isdrawing == true){
-      drawLine(x, y, e.offsetX, e.offsetY);
+      drawArrow(x, y, e.offsetX, e.offsetY);
       vecObj = {"x1": x, "y1": y, "x2": e.offsetX, "y2":e.offsetY};
       x = 0;
       y = 0;
       isdrawing = false;
    }
 });
-function drawLine(x1, y1, x2, y2){
+function drawArrow(x1, y1, x2, y2){
    ctx.beginPath();
    ctx.strokeStyle = "black";
    ctx.lineWith = 1;
@@ -92,9 +92,9 @@ function drawLine(x1, y1, x2, y2){
    ctx.translate(x2, y2);
    ctx.rotate(angle);
    ctx.moveTo(0,0);
-   ctx.lineTo(0, -10);
-   ctx.lineTo(15, 0);
-   ctx.lineTo(0, 10);
+   ctx.lineTo(0, -5);
+   ctx.lineTo(8, 0);
+   ctx.lineTo(0, 5);
    ctx.fillStyle = "rgb(72,72,72)";
    ctx.stroke();
    ctx.fill();
