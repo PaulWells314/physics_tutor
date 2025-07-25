@@ -1,11 +1,25 @@
 <!DOCTYPE html>
 <html>
+<style>
+   .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center; 
+   }
+
+</style>
 <body>
 <h1>Diagram</h1>
 <p><a href="{{ url_for('init') }}">Home</a></p>
-<canvas id="myCanvas" width="300" height="300" style="border:1px solid grey"></canvas>
-<button onclick="draw_rec()">Draw Problem</button>
-<button onclick="get_forces()">Get Forces</button>
+<div class="container">
+   <canvas id="myCanvas" width="300" height="300" style="border:1px solid grey"></canvas>
+   <textarea id="Description" ></textarea>
+   <div class="button-group">
+      <button onclick="draw_rec()">Draw Problem</button>
+      <button onclick="set_force()">Set Force</button>
+      <button onclick="get_forces()">Get Forces</button>
+   </div>
+</div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
 function draw_rec(){
@@ -27,7 +41,9 @@ function draw_rec(){
 }
 var x = 0;
 var y = 0;
-var vector_list = []
+var vector_list = [];
+var vec_obj;
+var force_txt;
 var isdrawing = false;
 const canvas = document.getElementById("myCanvas");
 const ctx    = canvas.getContext("2d");
@@ -39,8 +55,7 @@ canvas.addEventListener("mousedown", (e) => {
 canvas.addEventListener("mouseup", (e) => {
    if (isdrawing == true){
       drawLine(x, y, e.offsetX, e.offsetY);
-      var vecObj = {"x1": x, "y1": y, "x2": e.offsetX, "y2":e.offsetY};
-      vector_list.push(vecObj);
+      vecObj = {"x1": x, "y1": y, "x2": e.offsetX, "y2":e.offsetY};
       x = 0;
       y = 0;
       isdrawing = false;
@@ -75,6 +90,12 @@ function get_forces(){
      contentType: "application/json",
      data: vector_string
   }); 
+}
+function set_force(){
+   const desc = document.getElementById("Description");
+   txt = desc.value;
+   vecObj["label"] = txt;
+   vector_list.push(vecObj);
 } 
 
 </script>
