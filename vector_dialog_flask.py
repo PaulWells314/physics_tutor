@@ -102,7 +102,7 @@ def init():
          if req_type == "vectors":
             print(session['context']['vectors'])
             print(obj["responses"])
-            comment_txt = "unimplemented"
+            comment_txt = ""
             # Add all possible model responses to request to vector database
             user_responses = []
             for u in session['context']['vectors']:
@@ -114,7 +114,15 @@ def init():
                vector_db = ml.add_chunk_to_database(response_item, vector_db)
             similarities, perm = ml.retrieve_max_permutation(user_responses, vector_db)
             for idx, resp in enumerate(user_responses):
-               comment_txt += "student: {0} ai: {1} score: {2:1.3f}\n".format(resp, references[perm[idx]], similarities[idx])
+               pidx = perm[idx]
+               ref_vec = []
+               ref_vec.append(obj["responses"][pidx]["x"])
+               ref_vec.append(obj["responses"][pidx]["y"])
+               user_vec = []
+               user_vec.append(session['context']['vectors'][idx]["x2"] - session['context']['vectors'][idx]["x1"])
+               user_vec.append(session['context']['vectors'][idx]["y1"] - session['context']['vectors'][idx]["y2"])
+               sim = ml.cosine_similarity(ref_vec, user_vec) 
+               comment_txt += "student: {0} ref: {1} word score: {2:1.3f} physical vector score: {3:1.3f}\n".format(resp, references[pidx], similarities[idx], sim)
             # Missing user responses?
             if len(user_responses) < len(vector_db):
                for idx in range(len(user_responses), len(vector_db)):
