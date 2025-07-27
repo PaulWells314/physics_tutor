@@ -99,6 +99,26 @@ def init():
                    comment_txt = "equation matches {0}".format(obj["equation"])
                 else:
                    comment_txt = "equation does not match {0}".format(obj["equation"])
+         if req_type == "vectors":
+            print(session['context']['vectors'])
+            print(obj["responses"])
+            comment_txt = "unimplemented"
+            # Add all possible model responses to request to vector database
+            user_responses = []
+            for u in session['context']['vectors']:
+               user_responses.append(u['label']) 
+            references = []
+            for r in obj["responses"]:
+               references.append(r['label'])
+            for response_item in references:
+               vector_db = ml.add_chunk_to_database(response_item, vector_db)
+            similarities, perm = ml.retrieve_max_permutation(user_responses, vector_db)
+            for idx, resp in enumerate(user_responses):
+               comment_txt += "student: {0} ai: {1} score: {2:1.3f}\n".format(resp, references[perm[idx]], similarities[idx])
+            # Missing user responses?
+            if len(user_responses) < len(vector_db):
+               for idx in range(len(user_responses), len(vector_db)):
+                  comment_txt += "missing response: {0}\n".format(references[perm[idx]])         
          session['context']['comment_txt'] = comment_txt
          session.modified = True
          return render_template('index.html', context = session['context'])
@@ -117,5 +137,7 @@ def canvas():
 @app.route('/diagram', methods=['POST'])
 def diagram():
    data = request.get_json()
-   print(data)
+   session['context']['vectors'] = data
+   print(session['context']['vectors'])
+   session.modified = True
    return "OK" 
