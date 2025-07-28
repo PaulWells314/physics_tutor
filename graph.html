@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<style>
+   .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center; 
+   }
+   .force-label {
+   margin-top:  10px;
+   }
+   .button-group {
+   margin-top: 10px;
+   display: flex;
+   justify-content: center;
+   gap: 10px;
+   }
+   button {
+   padding: 10px;
+   width: 100px;
+   border-radius:  8px;
+   border: none;
+   background-color: #4CAF50;
+   color: #fff;
+   }
+</style>
+<body>
+<h1>Graph</h1>
+<p><a href="{{ url_for('init') }}">Home</a></p>
+<div class="container">
+   <canvas id="myCanvas" width="300" height="300" style="border:1px solid grey"></canvas>
+   <div class="force-label">
+   <label for="Description" id="Force-label">Force Label: </label>
+   <textarea id="Description" rows="1"></textarea>
+   </div>
+   <div class="button-group">
+      <button onclick="draw_axes()">Draw Axes</button>
+      <button onclick="set_force()">Set Line</button>
+      <button onclick="get_forces()">Get Lines</button>
+   </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+function draw_axes(){
+   var canvas = document.getElementById("myCanvas");
+   var ctx    = canvas.getContext("2d");
+   drawArrow(50,150,250,150);
+   drawArrow(150,250,150,50);
+}
+var x = 0;
+var y = 0;
+var vector_list = [];
+var vec_obj;
+var force_txt;
+var isdrawing = false;
+const canvas = document.getElementById("myCanvas");
+const ctx    = canvas.getContext("2d");
+canvas.addEventListener("mousedown", (e) => {
+   x = e.offsetX;
+   y = e.offsetY;
+   isdrawing = true;
+});
+canvas.addEventListener("mouseup", (e) => {
+   if (isdrawing == true){
+      drawArrow(x, y, e.offsetX, e.offsetY);
+      vecObj = {"x1": x, "y1": y, "x2": e.offsetX, "y2":e.offsetY};
+      x = 0;
+      y = 0;
+      isdrawing = false;
+   }
+});
+function drawArrow(x1, y1, x2, y2){
+   ctx.beginPath();
+   ctx.strokeStyle = "black";
+   ctx.lineWith = 1;
+   ctx.moveTo(x1, y1);
+   ctx.lineTo(x2, y2);
+   ctx.stroke();
+   ctx.save();
+   angle = Math.atan2(y2-y1, x2-x1);
+   ctx.translate(x2, y2);
+   ctx.rotate(angle);
+   ctx.moveTo(0,0);
+   ctx.lineTo(0, -5);
+   ctx.lineTo(8, 0);
+   ctx.lineTo(0, 5);
+   ctx.fillStyle = "rgb(72,72,72)";
+   ctx.stroke();
+   ctx.fill();
+   ctx.restore();
+   ctx.closePath();
+}
+function get_forces(){
+   vector_string = JSON.stringify(vector_list) 
+   $.ajax({
+     url: '/diagram',
+     type: 'POST',
+     contentType: "application/json",
+     data: vector_string
+  }); 
+}
+function set_force(){
+   const desc = document.getElementById("Description");
+   txt = desc.value;
+   vecObj["label"] = txt;
+   vector_list.push(vecObj);
+} 
+
+</script>
+</body>
+</html> 
+
