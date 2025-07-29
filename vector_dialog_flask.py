@@ -152,3 +152,10 @@ def diagram():
    print(session['context']['vectors'])
    session.modified = True
    return "OK" 
+@app.route('/graph_lines', methods=['POST'])
+def graph_lines():
+   data = request.get_json()
+   session['context']['graph_lines'] = data
+   print(session['context']['graph_lines'])
+   session.modified = True
+   return "OK" 
