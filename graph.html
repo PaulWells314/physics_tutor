@@ -35,7 +35,7 @@
    </div>
    <div class="button-group">
       <button onclick="draw_axes()">Draw Axes</button>
-      <button onclick="set_force()">Set Line</button>
+      <button onclick="set_line()">Set Line</button>
       <button onclick="get_forces()">Get Lines</button>
    </div>
 </div>
@@ -44,8 +44,8 @@
 function draw_axes(){
    var canvas = document.getElementById("myCanvas");
    var ctx    = canvas.getContext("2d");
-   drawArrow(50,150,250,150);
-   drawArrow(150,250,150,50);
+   drawLine(50,150,250,150);
+   drawLine(150,250,150,50);
 }
 var x = 0;
 var y = 0;
@@ -56,38 +56,23 @@ var isdrawing = false;
 const canvas = document.getElementById("myCanvas");
 const ctx    = canvas.getContext("2d");
 canvas.addEventListener("mousedown", (e) => {
+   if (isdrawing == true){
+      drawLine(x, y, e.offsetX, e.offsetY);
+      vecObj = {"x1": x, "y1": y, "x2": e.offsetX, "y2":e.offsetY};
+   }
    x = e.offsetX;
    y = e.offsetY;
    isdrawing = true;
 });
 canvas.addEventListener("mouseup", (e) => {
-   if (isdrawing == true){
-      drawArrow(x, y, e.offsetX, e.offsetY);
-      vecObj = {"x1": x, "y1": y, "x2": e.offsetX, "y2":e.offsetY};
-      x = 0;
-      y = 0;
-      isdrawing = false;
-   }
 });
-function drawArrow(x1, y1, x2, y2){
+function drawLine(x1, y1, x2, y2){
    ctx.beginPath();
    ctx.strokeStyle = "black";
    ctx.lineWith = 1;
    ctx.moveTo(x1, y1);
    ctx.lineTo(x2, y2);
    ctx.stroke();
-   ctx.save();
-   angle = Math.atan2(y2-y1, x2-x1);
-   ctx.translate(x2, y2);
-   ctx.rotate(angle);
-   ctx.moveTo(0,0);
-   ctx.lineTo(0, -5);
-   ctx.lineTo(8, 0);
-   ctx.lineTo(0, 5);
-   ctx.fillStyle = "rgb(72,72,72)";
-   ctx.stroke();
-   ctx.fill();
-   ctx.restore();
    ctx.closePath();
 }
 function get_forces(){
@@ -99,11 +84,12 @@ function get_forces(){
      data: vector_string
   }); 
 }
-function set_force(){
+function set_line(){
    const desc = document.getElementById("Description");
    txt = desc.value;
    vecObj["label"] = txt;
    vector_list.push(vecObj);
+   isdrawing = false;
 } 
 
 </script>
