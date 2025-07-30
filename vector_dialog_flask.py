@@ -126,7 +126,12 @@ def init():
             # Missing user responses?
             if len(user_responses) < len(vector_db):
                for idx in range(len(user_responses), len(vector_db)):
-                  comment_txt += "missing response: {0}\n".format(references[perm[idx]])         
+                  comment_txt += "missing response: {0}\n".format(references[perm[idx]])
+         if req_type == "graph":
+            print(session['context']['graph_lines'])
+            print(obj["responses"])
+            comment_txt = "not implemented"
+             
          session['context']['comment_txt'] = comment_txt
          session.modified = True
          return render_template('index.html', context = session['context'])
@@ -149,13 +154,11 @@ def graph():
 def diagram():
    data = request.get_json()
    session['context']['vectors'] = data
-   print(session['context']['vectors'])
    session.modified = True
    return "OK" 
 @app.route('/graph_lines', methods=['POST'])
 def graph_lines():
    data = request.get_json()
    session['context']['graph_lines'] = data
-   print(session['context']['graph_lines'])
    session.modified = True
    return "OK" 
