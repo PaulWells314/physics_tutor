@@ -34,11 +34,14 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
+const width = 300;
+const height = 300;
+const margin = 50;
 function draw_axes(){
    var canvas = document.getElementById("myCanvas");
    var ctx    = canvas.getContext("2d");
-   drawLine(50,150,250,150);
-   drawLine(150,250,150,50);
+   drawLine(margin, height/2, width - margin ,height/2);
+   drawLine(width/2, height-margin, width/2, margin);
 }
 var x = 0;
 var y = 0;
@@ -52,7 +55,7 @@ const ctx    = canvas.getContext("2d");
 canvas.addEventListener("mousedown", (e) => {
    if (isdrawing == true){
       drawLine(x, y, e.offsetX, e.offsetY);
-      line_obj = {"x1": x, "y1": y, "x2": e.offsetX, "y2":e.offsetY};
+      line_obj = {"x1": x-width/2, "y1": height/2 - y, "x2": e.offsetX-width/2, "y2":height/2 - e.offsetY};
       line_list.push(line_obj)
    }
    x = e.offsetX;
