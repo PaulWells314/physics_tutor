@@ -128,9 +128,38 @@ def init():
                for idx in range(len(user_responses), len(vector_db)):
                   comment_txt += "missing response: {0}\n".format(references[perm[idx]])
          if req_type == "graph":
+            comment_txt = ""
+            def graph_unique_array(f):
+               is_first = True
+               g = []
+               for i in f:
+                  if not is_first:
+                     if i != i_prev:
+                        g.append(i)
+                  else:
+                     is_first = False
+                     g.append(i)
+                  i_prev = i
+               return g
+            def graph_parse_array(f, y):
+               if abs(y) <= 2:
+                  f.append(0)
+               elif y > 0:
+                  f.append(1)
+               else:
+                  f.append(-1)  
             print(session['context']['graph_lines'])
-            print(obj["responses"])
-            comment_txt = "not implemented"
+            for index, line in enumerate(session['context']['graph_lines']):
+               f0 = []
+               for segment in line:
+                  graph_parse_array(f0, segment["y1"])
+               f0_filtered = graph_unique_array(f0)
+               print(f0_filtered)
+               print(obj["responses"][index])
+               if f0_filtered ==  obj["responses"][index]["f0"]:
+                  comment_txt = comment_txt + " f0 match"
+               else:
+                  comment_txt = comment_txt + " f0 mismatch"
              
          session['context']['comment_txt'] = comment_txt
          session.modified = True
