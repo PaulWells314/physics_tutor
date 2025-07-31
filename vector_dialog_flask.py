@@ -161,6 +161,16 @@ def init():
                else:
                   comment_txt = comment_txt + " f0 mismatch"
              
+               f1 = []
+               for segment in line:
+                  graph_parse_array(f1, segment["y2"] - segment["y1"])
+               f1_filtered = graph_unique_array(f1)
+               print(f1_filtered)
+               print(obj["responses"][index])
+               if f1_filtered ==  obj["responses"][index]["f1"]:
+                  comment_txt = comment_txt + " f1 match"
+               else:
+                  comment_txt = comment_txt + " f1 mismatch"
          session['context']['comment_txt'] = comment_txt
          session.modified = True
          return render_template('index.html', context = session['context'])
