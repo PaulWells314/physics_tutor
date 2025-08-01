@@ -44,11 +44,9 @@
 function draw_rec(){
    var canvas = document.getElementById("myCanvas");
    var ctx    = canvas.getContext("2d");
-   var startX = 120;
-   var startY = 120;
    ctx.save();
    ctx.beginPath();
-   ctx.translate(150, 150);
+   ctx.translate(150.5, 150.5);
    ctx.rotate(-30*Math.PI/180);
    ctx.rect(-30, -30, 60, 60);
    ctx.fillStyle = "blue";
@@ -84,12 +82,12 @@ function drawArrow(x1, y1, x2, y2){
    ctx.beginPath();
    ctx.strokeStyle = "black";
    ctx.lineWith = 1;
-   ctx.moveTo(x1, y1);
-   ctx.lineTo(x2, y2);
+   ctx.moveTo(x1+0.5, y1+0.5);
+   ctx.lineTo(x2+0.5, y2+0.5);
    ctx.stroke();
    ctx.save();
    angle = Math.atan2(y2-y1, x2-x1);
-   ctx.translate(x2, y2);
+   ctx.translate(x2+0.5, y2+0.5);
    ctx.rotate(angle);
    ctx.moveTo(0,0);
    ctx.lineTo(0, -5);
