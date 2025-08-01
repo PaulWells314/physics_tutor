@@ -141,8 +141,8 @@ def init():
                      g.append(i)
                   i_prev = i
                return g
-            def graph_parse_array(f, y):
-               if abs(y) <= 2:
+            def graph_parse_array(f, y, threshold):
+               if abs(y) <= threshold:
                   f.append(0)
                elif y > 0:
                   f.append(1)
@@ -152,7 +152,7 @@ def init():
             for index, line in enumerate(session['context']['graph_lines']):
                f0 = []
                for segment in line:
-                  graph_parse_array(f0, segment["y1"])
+                  graph_parse_array(f0, segment["y1"], 2)
                f0_filtered = graph_unique_array(f0)
                print(f0_filtered)
                print(obj["responses"][index])
@@ -163,9 +163,12 @@ def init():
                #first derivative 
                f1 = []
                grads = []
+               deltas = []
                for segment in line:
-                  graph_parse_array(f1, segment["y2"] - segment["y1"])
-                  grads.append(segment["y2"] - segment["y1"])
+                  g = (segment["y2"] - segment["y1"])/(segment["x2"] - segment["x1"])
+                  graph_parse_array(f1, g, 0.01)
+                  grads.append(g)
+                  deltas.append((segment["x2"] + segment["x1"])/2.0)
                f1_filtered = graph_unique_array(f1)
                print(f1_filtered)
                print(obj["responses"][index])
@@ -177,9 +180,9 @@ def init():
                f2 = []
                second_derivatives = [] 
                for i,grad in enumerate(grads[0:-1]):
-                  second_derivatives.append(grads[i+1]-grads[i])
+                  second_derivatives.append((grads[i+1]-grads[i])/(deltas[i+1]-deltas[i]))
                for second_derivative in second_derivatives:
-                  graph_parse_array(f2, second_derivative)
+                  graph_parse_array(f2, second_derivative, 0.0001)
                f2_filtered = graph_unique_array(f2)
                print(f2_filtered)
                print(obj["responses"][index])
