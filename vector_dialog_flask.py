@@ -160,10 +160,12 @@ def init():
                   comment_txt = comment_txt + " f0 match"
                else:
                   comment_txt = comment_txt + " f0 mismatch"
-             
+               #first derivative 
                f1 = []
+               grads = []
                for segment in line:
                   graph_parse_array(f1, segment["y2"] - segment["y1"])
+                  grads.append(segment["y2"] - segment["y1"])
                f1_filtered = graph_unique_array(f1)
                print(f1_filtered)
                print(obj["responses"][index])
@@ -171,6 +173,21 @@ def init():
                   comment_txt = comment_txt + " f1 match"
                else:
                   comment_txt = comment_txt + " f1 mismatch"
+               #second derivative
+               f2 = []
+               second_derivatives = [] 
+               for i,grad in enumerate(grads[0:-1]):
+                  second_derivatives.append(grads[i+1]-grads[i])
+               for second_derivative in second_derivatives:
+                  graph_parse_array(f2, second_derivative)
+               f2_filtered = graph_unique_array(f2)
+               print(f2_filtered)
+               print(obj["responses"][index])
+               if f2_filtered ==  obj["responses"][index]["f2"]:
+                  comment_txt = comment_txt + " f2 match"
+               else:
+                  comment_txt = comment_txt + " f2 mismatch"
+
          session['context']['comment_txt'] = comment_txt
          session.modified = True
          return render_template('index.html', context = session['context'])
