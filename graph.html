@@ -25,23 +25,29 @@
 <h1>Graph</h1>
 <p><a href="{{ url_for('init') }}">Home</a></p>
 <div class="container">
-   <canvas id="myCanvas" width="300" height="300" style="border:1px solid grey"></canvas>
+   <canvas id="myCanvas" width="600" height="600" style="border:1px solid grey"></canvas>
    <div class="button-group">
-      <button onclick="draw_axes()">Draw Axes</button>
+      <button onclick="draw_axes(ctx)">Draw Axes</button>
       <button onclick="set_line()">Set Line</button>
       <button onclick="get_lines()">Get Lines</button>
    </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
-const width = 300;
-const height = 300;
+const width  = 600;
+const height = 600;
 const margin = 50;
-function draw_axes(){
-   var canvas = document.getElementById("myCanvas");
-   var ctx    = canvas.getContext("2d");
-   drawLine(margin, height/2, width - margin ,height/2);
-   drawLine(width/2, height-margin, width/2, margin);
+var canvas = document.getElementById("myCanvas");
+let dpi = window.devicePixelRatio;
+canvas.width  = width*dpi;
+canvas.height = height*dpi;
+canvas.style.width = `${width}px`
+canvas.style.height = `${height}px`
+var ctx    = canvas.getContext("2d");
+ctx.scale(dpi,dpi);
+function draw_axes(ctx){
+   drawLine(ctx, margin, height/2, width - margin ,height/2);
+   drawLine(ctx, width/2, height-margin, width/2, margin);
 }
 var x = 0;
 var y = 0;
@@ -50,11 +56,9 @@ var lines_list = [];
 var line_obj;
 var force_txt;
 var isdrawing = false;
-const canvas = document.getElementById("myCanvas");
-const ctx    = canvas.getContext("2d");
 canvas.addEventListener("mousedown", (e) => {
    if (isdrawing == true){
-      drawLine(x, y, e.offsetX, e.offsetY);
+      drawLine(ctx, x, y, e.offsetX, e.offsetY);
       line_obj = {"x1": x-width/2, "y1": height/2 - y, "x2": e.offsetX-width/2, "y2":height/2 - e.offsetY};
       line_list.push(line_obj)
    }
@@ -64,7 +68,7 @@ canvas.addEventListener("mousedown", (e) => {
 });
 canvas.addEventListener("mouseup", (e) => {
 });
-function drawLine(x1, y1, x2, y2){
+function drawLine(ctx, x1, y1, x2, y2){
    ctx.beginPath();
    ctx.strokeStyle = "black";
    ctx.lineWith = 1;
