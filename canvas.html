@@ -41,29 +41,35 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
-function draw_rec(){
-   var canvas = document.getElementById("myCanvas");
-   var ctx    = canvas.getContext("2d");
-   ctx.save();
-   ctx.beginPath();
-   ctx.translate(150.5, 150.5);
-   ctx.rotate(-30*Math.PI/180);
-   ctx.rect(-30, -30, 60, 60);
-   ctx.fillStyle = "blue";
-   ctx.fill();
-   ctx.moveTo(-130, 30);
-   ctx.lineTo(130, 30);
-   ctx.stroke();
-   ctx.restore();
+function create_draw_rec(ctx, pic_width, pic_height, slope_degrees) {
+   function draw_rec(){
+      ctx.save();
+      ctx.beginPath();
+      ctx.translate(0.5 + pic_width/2, 0.5 + pic_height/2);
+      ctx.rotate(-slope_degrees*Math.PI/180);
+      ctx.rect(-0.1*pic_width, -0.1*pic_width, 0.2*pic_width, 0.2*pic_width);
+      ctx.fillStyle = "blue";
+      ctx.fill();
+      ctx.moveTo(-0.4*pic_width, 0.1*pic_width);
+      ctx.lineTo(0.4*pic_width, 0.1*pic_width);
+      ctx.stroke();
+      ctx.restore();
+  }
+  return draw_rec;
 }
+
 var x = 0;
 var y = 0;
+var width  = 300;
+var height = 300;
+var slope_degrees = 30;
 var vector_list = [];
 var vec_obj;
 var force_txt;
 var isdrawing = false;
 const canvas = document.getElementById("myCanvas");
 const ctx    = canvas.getContext("2d");
+draw_rec     = create_draw_rec(ctx, width, height, slope_degrees);
 canvas.addEventListener("mousedown", (e) => {
    x = e.offsetX;
    y = e.offsetY;
@@ -71,14 +77,14 @@ canvas.addEventListener("mousedown", (e) => {
 });
 canvas.addEventListener("mouseup", (e) => {
    if (isdrawing == true){
-      drawArrow(x, y, e.offsetX, e.offsetY);
+      drawArrow(ctx, x, y, e.offsetX, e.offsetY);
       vecObj = {"x1": x, "y1": y, "x2": e.offsetX, "y2":e.offsetY};
       x = 0;
       y = 0;
       isdrawing = false;
    }
 });
-function drawArrow(x1, y1, x2, y2){
+function drawArrow(ctx, x1, y1, x2, y2){
    ctx.beginPath();
    ctx.strokeStyle = "black";
    ctx.lineWith = 1;
