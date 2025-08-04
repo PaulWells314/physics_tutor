@@ -3,6 +3,9 @@
       "description": "A block of mass m is resting stationary on a ramp. What forces are acting on the block?"
    }, 
    {
+      "canvas_background": "ramp.js"
+   },
+   {
       "request": "What is the first step?",
       "type": "all",
       "responses": ["Draw a diagram of ramp with labels"]

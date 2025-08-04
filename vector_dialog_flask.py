@@ -205,7 +205,8 @@ def init():
  
 @app.route('/canvas')
 def canvas():
-   return render_template('canvas.html') 
+   obj = session['data'][session['obj_index']]
+   return render_template('canvas.html', bg=obj["canvas_background"]) 
 @app.route('/graph')
 def graph():
    return render_template('graph.html') 
