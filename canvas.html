@@ -27,6 +27,8 @@
 <body>
 <h1>Diagram</h1>
 <p><a href="{{ url_for('init') }}">Home</a></p>
+<script src="{{ url_for('static', filename='ramp.js') }}"> </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <div class="container">
    <canvas id="myCanvas" width="300" height="300" style="border:1px solid grey"></canvas>
    <div class="force-label">
@@ -34,36 +36,17 @@
    <textarea id="Description" rows="1"></textarea>
    </div>
    <div class="button-group">
-      <button onclick="draw_rec()">Draw Problem</button>
+      <button onclick="draw_pic()">Draw Problem</button>
       <button onclick="set_force()">Set Force</button>
       <button onclick="get_forces()">Get Forces</button>
    </div>
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
-function create_draw_rec(ctx, pic_width, pic_height, slope_degrees) {
-   function draw_rec(){
-      ctx.save();
-      ctx.beginPath();
-      ctx.translate(0.5 + pic_width/2, 0.5 + pic_height/2);
-      ctx.rotate(-slope_degrees*Math.PI/180);
-      ctx.rect(-0.1*pic_width, -0.1*pic_width, 0.2*pic_width, 0.2*pic_width);
-      ctx.fillStyle = "blue";
-      ctx.fill();
-      ctx.moveTo(-0.4*pic_width, 0.1*pic_width);
-      ctx.lineTo(0.4*pic_width, 0.1*pic_width);
-      ctx.stroke();
-      ctx.restore();
-  }
-  return draw_rec;
-}
-
 var x = 0;
 var y = 0;
 var width  = 600;
 var height = 600;
 let dpi = window.devicePixelRatio;
-var slope_degrees = 30;
 var vector_list = [];
 var vec_obj;
 var force_txt;
@@ -75,7 +58,7 @@ canvas.style.width = `${width}px`
 canvas.style.height = `${height}px`
 const ctx    = canvas.getContext("2d");
 ctx.scale(dpi, dpi);
-draw_rec     = create_draw_rec(ctx, width, height, slope_degrees);
+draw_pic     = create_draw_pic(ctx, width, height);
 canvas.addEventListener("mousedown", (e) => {
    x = e.offsetX;
    y = e.offsetY;
@@ -126,7 +109,6 @@ function set_force(){
    vecObj["label"] = txt;
    vector_list.push(vecObj);
 } 
-
 </script>
 </body>
 </html> 
