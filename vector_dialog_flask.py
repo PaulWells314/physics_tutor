@@ -21,10 +21,6 @@ def init_context(session):
    
 @app.route('/', methods = ['POST', 'GET'])
 def init():
-   # Return from canvas?
-   if request.referrer and request.referrer.split("/")[-1] == "canvas":
-      return render_template('index.html', context = session['context'])
-   
    if request.method == 'POST':
       selected_option =  request.form.get('options')
       # Load button
@@ -45,6 +41,19 @@ def init():
                    session['context']['request_txt'] = obj["request"] 
              session.modified = True
              return render_template('index.html', context = session['context'])
+   elif request.method == "GET":
+      if 'context' not in session:
+         session['obj_index'] = 0
+         init_context(session) 
+         session['selected'] = ""
+      return render_template('index.html', context = session['context'])
+@app.route('/dialog', methods = ['POST', 'GET'])
+def dialog():
+   # Return from canvas?
+   if request.referrer and request.referrer.split("/")[-1] == "canvas":
+      return render_template('dialog.html', context = session['context'])
+   
+   if request.method == 'POST':
       # Next button
       if request.form.get('submit_button') == "next":
          if session['obj_index'] < len(session['data']) - 1:
@@ -56,7 +65,7 @@ def init():
             session['context']['comment_txt'] = "End of Questions" 
          session['context']['response_txt'] = ""
          session.modified = True
-         return render_template('index.html', context = session['context'])
+         return render_template('dialog.html', context = session['context'])
       # Submit button  
       if request.form.get('submit_button') == "submit":
          obj = session['data'][session['obj_index']]
@@ -197,7 +206,7 @@ def init():
 
          session['context']['comment_txt'] = comment_txt
          session.modified = True
-         return render_template('index.html', context = session['context'])
+         return render_template('dialog.html', context = session['context'])
 
    elif request.method == "GET":
       if 'context' not in session:
@@ -205,7 +214,7 @@ def init():
          init_context(session) 
          session['selected'] = ""
             
-      return render_template('index.html', context = session['context'])
+      return render_template('dialog.html', context = session['context'])
  
 @app.route('/canvas')
 def canvas():
