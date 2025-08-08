@@ -54,6 +54,11 @@ def dialog():
       return render_template('dialog.html', context = session['context'])
    
    if request.method == 'POST':
+      if 'data' not in session:
+         session['context']['comment_txt'] = "Use Load to load problem!"
+         session.modified = True
+         return render_template('dialog.html', context = session['context'])
+
       # Next button
       if request.form.get('submit_button') == "next":
          if session['obj_index'] < len(session['data']) - 1:
@@ -69,6 +74,10 @@ def dialog():
       # Submit button  
       if request.form.get('submit_button') == "submit":
          obj = session['data'][session['obj_index']]
+         # Submit before Next? 
+         if 'request' not in obj:
+               session['context']['comment_txt'] = "Please press Next before Submit" 
+               return render_template('dialog.html', context = session['context'])
          vector_db = []
          comment_txt=""
          req_type = obj["type"]
@@ -218,6 +227,10 @@ def dialog():
  
 @app.route('/canvas')
 def canvas():
+   if 'data' not in session:
+      session['context']['comment_txt'] = "Use Load to load problem!"
+      session.modified = True
+      return render_template('dialog.html', context = session['context'])
    for d in session['data']:
       if 'canvas_background' in d:
          background = d['canvas_background']
