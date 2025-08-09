@@ -122,6 +122,12 @@ def dialog():
                 else:
                    comment_txt = "equation does not match {0}".format(obj["equation"])
          if req_type == "vectors":
+            # Use canvas to create vectors
+            if 'vectors' not in session['context']:
+               comment_txt = "Use Canvas to create vectors!"
+               session['context']['comment_txt'] = comment_txt
+               session.modified = True
+               return render_template('dialog.html', context = session['context'])
             print(session['context']['vectors'])
             print(obj["responses"])
             comment_txt = ""
@@ -150,6 +156,12 @@ def dialog():
                for idx in range(len(user_responses), len(vector_db)):
                   comment_txt += "missing response: {0}\n".format(references[perm[idx]])
          if req_type == "graph":
+            # Use graph to create graph lines 
+            if 'graph_lines' not in session['context']:
+               comment_txt = "Use Graph to create graph line!"
+               session['context']['comment_txt'] = comment_txt
+               session.modified = True
+               return render_template('dialog.html', context = session['context'])
             comment_txt = ""
             def graph_unique_array(f):
                is_first = True
