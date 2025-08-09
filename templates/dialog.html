@@ -25,7 +25,6 @@ button {
  background-color: #4CAF50;
  color: #fff;
 }
-
 </style>
 </head>
 <body>
@@ -52,10 +51,8 @@ button {
 {{ context['response_txt'] }}
 </textarea>
 
-<p><label>Feedback: </label><p>
-<textarea rows="5"  cols="80">
-{{ context['comment_txt'] }}
-</textarea>
+<p><label>Feedback: </label></p>
+<p style="color:{{ context['color'] }};">{{ context['comment_txt'].split('\n') | join('<br/>' | safe)  }} </p>
 <div class="button-container">
 <button type="submit" name="submit_button" value="next">Next</button>
 <button type="submit" name="submit_button" value="submit">Submit</button>

@@ -81,6 +81,7 @@ def dialog():
          vector_db = []
          comment_txt=""
          req_type = obj["type"]
+         session['context']['color'] = 'black'
          session['context']['response_txt'] = request.form.get('response_text')
          user_str = session['context']['response_txt'].rstrip()
          if req_type == "all":
@@ -91,13 +92,17 @@ def dialog():
             # Too many user responses?
             if len(user_responses) > len(vector_db):
                comment_txt += "too many user responses"
+               session['context']['color'] = 'red'
             else:
                similarities, perm = ml.retrieve_max_permutation(user_responses, vector_db)
                for idx, resp in enumerate(user_responses):
                   comment_txt += "student: {0} ai: {1} score: {2:1.3f}\n".format(resp, obj["responses"][perm[idx]], similarities[idx])
+                  if similarities[idx] <= 0.8:
+                     session['context']['color'] = 'red'
                # Missing user responses?
                if len(user_responses) < len(vector_db):
                   for idx in range(len(user_responses), len(vector_db)):
+                     session['context']['color'] = 'red'
                      comment_txt += "missing response: {0}\n".format(obj["responses"][perm[idx]])         
          if req_type == "paint":
             if "responses" in obj: 
