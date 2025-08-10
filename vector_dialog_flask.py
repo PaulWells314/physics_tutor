@@ -105,6 +105,13 @@ def dialog():
                      session['context']['color'] = 'red'
                      comment_txt += "missing response: {0}\n".format(obj["responses"][perm[idx]])         
          if req_type == "paint":
+            #Empty input?
+            if user_str == "":
+                comment_txt += "Empty response!  Please try again!"
+                session['context']['comment_txt'] = comment_txt
+                session['context']['color'] = 'orange'
+                session.modified = True
+                return render_template('dialog.html', context = session['context'])
             if "responses" in obj: 
                for response in obj["responses"]:
                   response_text    = response["text"]
