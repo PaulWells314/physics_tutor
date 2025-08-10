@@ -128,8 +128,10 @@ def dialog():
             try:
                user_eqn = sympify(user_str) 
             except SympifyError:
+               session['context']['color'] = 'orange'
                comment_txt = "mistake in equation format (need to use * for all multiplies)"
             except Exception as e:
+               session['context']['color'] = 'orange'
                comment_txt = "equation error"
             else:
                 if 0 == (user_eqn-ref_eqn):
