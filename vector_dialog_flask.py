@@ -55,6 +55,7 @@ def dialog():
    
    if request.method == 'POST':
       if 'data' not in session:
+         session['context']['color'] = 'orange'
          session['context']['comment_txt'] = "Use Load to load problem!"
          session.modified = True
          return render_template('dialog.html', context = session['context'])
@@ -76,7 +77,9 @@ def dialog():
          obj = session['data'][session['obj_index']]
          # Submit before Next? 
          if 'request' not in obj:
+               session['context']['color'] = 'orange'
                session['context']['comment_txt'] = "Please press Next before Submit" 
+               session.modified = True
                return render_template('dialog.html', context = session['context'])
          vector_db = []
          comment_txt=""
@@ -132,11 +135,13 @@ def dialog():
                 if 0 == (user_eqn-ref_eqn):
                    comment_txt = "equation matches {0}".format(obj["equation"])
                 else:
+                   session['context']['color'] = 'red'
                    comment_txt = "equation does not match {0}".format(obj["equation"])
          if req_type == "vectors":
             # Use canvas to create vectors
             if 'vectors' not in session['context']:
                comment_txt = "Use Canvas to create vectors!"
+               session['context']['color'] = 'orange'
                session['context']['comment_txt'] = comment_txt
                session.modified = True
                return render_template('dialog.html', context = session['context'])
@@ -162,15 +167,19 @@ def dialog():
                user_vec.append(session['context']['vectors'][idx]["x2"] - session['context']['vectors'][idx]["x1"])
                user_vec.append(session['context']['vectors'][idx]["y1"] - session['context']['vectors'][idx]["y2"])
                sim = ml.cosine_similarity(ref_vec, user_vec) 
+               if sim <= 0.8:
+                  session['context']['color'] = 'red'
                comment_txt += "student: {0} ref: {1} word score: {2:1.3f} physical vector score: {3:1.3f}\n".format(resp, references[pidx], similarities[idx], sim)
             # Missing user responses?
-            if len(user_responses) < len(vector_db):
+            if len(user_responses) < len(vector_db):  
+               session['context']['color'] = 'red'
                for idx in range(len(user_responses), len(vector_db)):
                   comment_txt += "missing response: {0}\n".format(references[perm[idx]])
          if req_type == "graph":
             # Use graph to create graph lines 
             if 'graph_lines' not in session['context']:
                comment_txt = "Use Graph to create graph line!"
+               session['context']['color'] = 'orange'
                session['context']['comment_txt'] = comment_txt
                session.modified = True
                return render_template('dialog.html', context = session['context'])
@@ -205,6 +214,7 @@ def dialog():
                if f0_filtered ==  obj["responses"][index]["f0"]:
                   comment_txt = comment_txt + " f0 match"
                else:
+                  session['context']['color'] = 'red'
                   comment_txt = comment_txt + " f0 mismatch"
                #first derivative 
                f1 = []
@@ -220,7 +230,8 @@ def dialog():
                print(obj["responses"][index])
                if f1_filtered ==  obj["responses"][index]["f1"]:
                   comment_txt = comment_txt + " f1 match"
-               else:
+               else: 
+                  session['context']['color'] = 'red'
                   comment_txt = comment_txt + " f1 mismatch"
                #second derivative
                f2 = []
@@ -235,6 +246,7 @@ def dialog():
                if f2_filtered ==  obj["responses"][index]["f2"]:
                   comment_txt = comment_txt + " f2 match"
                else:
+                  session['context']['color'] = 'red'
                   comment_txt = comment_txt + " f2 mismatch"
 
          session['context']['comment_txt'] = comment_txt
