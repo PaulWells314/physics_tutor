@@ -159,6 +159,13 @@ def dialog():
                references.append(r['label'])
             for response_item in references:
                vector_db = ml.add_chunk_to_database(response_item, vector_db)
+            # Too many user responses?
+            if len(user_responses) > len(references):  
+               session['context']['color'] = 'red'
+               comment_txt += "Too many user vectors"
+               session['context']['comment_txt'] = comment_txt
+               session.modified = True
+               return render_template('dialog.html', context = session['context'])
             similarities, perm = ml.retrieve_max_permutation(user_responses, vector_db)
             for idx, resp in enumerate(user_responses):
                pidx = perm[idx]
@@ -173,7 +180,7 @@ def dialog():
                   session['context']['color'] = 'red'
                comment_txt += "student: {0} ref: {1} word score: {2:1.3f} physical vector score: {3:1.3f}\n".format(resp, references[pidx], similarities[idx], sim)
             # Missing user responses?
-            if len(user_responses) < len(vector_db):  
+            if len(user_responses) < len(references):  
                session['context']['color'] = 'red'
                for idx in range(len(user_responses), len(vector_db)):
                   comment_txt += "missing response: {0}\n".format(references[perm[idx]])
