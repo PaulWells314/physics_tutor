@@ -35,7 +35,6 @@
    <textarea id="Description" rows="1"></textarea>
    </div>
    <div class="button-group">
-      <button onclick="draw_pic()">Draw Problem</button>
       <button onclick="set_force()">Set Force</button>
       <button onclick="get_forces()">Get Forces</button>
    </div>
@@ -108,7 +107,10 @@ function set_force(){
    vecObj["label"] = txt;
    vector_list.push(vecObj);
    isdrawing = false;
-} 
+}
+window.onload = function() {
+  draw_pic();
+}; 
 </script>
 </body>
 </html> 
