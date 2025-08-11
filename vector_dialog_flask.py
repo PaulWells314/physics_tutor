@@ -207,6 +207,13 @@ def dialog():
                   f.append(-1)  
             print(session['context']['graph_lines'])
             for index, line in enumerate(session['context']['graph_lines']):
+               for segment in line:
+                  if segment["x2"] ==  segment["x1"]:
+                     comment_txt += "segment zero delta x not supported: repeat point or infinite gradient"
+                     session['context']['color'] = 'orange'
+                     session['context']['comment_txt'] = comment_txt
+                     session.modified = True
+                     return render_template('dialog.html', context = session['context'])
                f0 = []
                for segment in line:
                   graph_parse_array(f0, segment["y1"], 2)
