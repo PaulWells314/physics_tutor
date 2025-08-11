@@ -206,6 +206,14 @@ def dialog():
                else:
                   f.append(-1)  
             print(session['context']['graph_lines'])
+            user_line_num = len(session['context']['graph_lines'])
+            ref_line_num  = len(obj["responses"]) 
+            if user_line_num != ref_line_num:
+               session['context']['color'] = 'red'
+               comment_txt = comment_txt + "number of captured lines does not equal number of expected lines"
+               session['context']['comment_txt'] = comment_txt
+               session.modified = True
+               return render_template('dialog.html', context = session['context']) 
             for index, line in enumerate(session['context']['graph_lines']):
                for segment in line:
                   if segment["x2"] ==  segment["x1"]:
