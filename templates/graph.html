@@ -26,7 +26,6 @@
 <div class="container">
    <canvas id="myCanvas" width="600" height="600" style="border:1px solid grey"></canvas>
    <div class="button-group">
-      <button onclick="draw_axes(ctx)">Draw Axes</button>
       <button onclick="set_line()">Set Line</button>
       <button onclick="get_lines()">Get Lines</button>
    </div>
@@ -90,7 +89,10 @@ function set_line(){
    lines_list.push([...line_list]); // add by value
    line_list = []
    isdrawing = false;
-} 
+}
+window.onload = function() { 
+   draw_axes(ctx);
+};
 </script>
 </body>
 </html> 
