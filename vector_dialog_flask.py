@@ -70,6 +70,18 @@ def dialog():
          session['context']['response_txt'] = ""
          session.modified = True
          return render_template('dialog.html', context = session['context'])
+      # Previous button
+      if request.form.get('submit_button') == "previous":
+         if session['obj_index'] > 0:
+            session['obj_index'] = session['obj_index'] - 1
+            obj = session['data'][session['obj_index']]
+            session['context']['request_txt'] = obj["request"]
+            session['context']['comment_txt'] = "" 
+         else:
+            session['context']['comment_txt'] = "First Question" 
+         session['context']['response_txt'] = ""
+         session.modified = True
+         return render_template('dialog.html', context = session['context'])
       # Submit button  
       if request.form.get('submit_button') == "submit":
          obj = session['data'][session['obj_index']]
