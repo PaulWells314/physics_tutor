@@ -1,10 +1,6 @@
-[
-   {
-      "description": "A block of mass m is resting stationary on a ramp. What forces are acting on the block?"
-   }, 
-   {
-      "canvas_background": "ramp.js"
-   },
+{
+   "description": "A block of mass m is resting stationary on a ramp. What forces are acting on the block?",
+   "request_list": [
    {
       "request": "What is the first step?",
       "type": "all",
@@ -71,6 +67,7 @@
    {
       "request": "Use canvas graphical tool to draw forces acting on block and give labels to each force",
       "type": "vectors",
+      "canvas_background": "ramp.js",
       "responses":
       [
          {
@@ -102,4 +99,5 @@
          }
       ]
    }
-]
+   ]
+}

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect
 import json
 import math
 import sys
@@ -26,19 +26,17 @@ def init():
       # Load button
       if request.form.get('submit_button') == "load":
           with open(selected_option) as fin:
-             session['data'] = json.load(fin)
+             data = json.load(fin)
+             session['data'] = data['request_list'] 
              session['obj_index'] = 0
              init_context(session)
              session['selected'] = selected_option
              obj = session['data'][session['obj_index']]
              # Description of problem at start of json
-             if "description" in obj:
-                session['context']['problem_txt'] = obj["description"]
-                session['obj_index'] = session['obj_index'] + 1
-                obj = session['data'][session['obj_index']]
-                # First request 
-                if "request" in obj:
-                   session['context']['request_txt'] = obj["request"] 
+             session['context']['problem_txt'] = data["description"]
+             # First request 
+             if "request" in obj:
+                session['context']['request_txt'] = obj["request"] 
              session.modified = True
              return render_template('index.html', context = session['context'])
    elif request.method == "GET":
@@ -289,12 +287,19 @@ def dialog():
 def canvas():
    if 'data' not in session:
       session['context']['comment_txt'] = "Use Load to load problem!"
+      session['context']['color'] = 'orange'
       session.modified = True
-      return render_template('dialog.html', context = session['context'])
-   for d in session['data']:
-      if 'canvas_background' in d:
-         background = d['canvas_background']
-   return render_template('canvas.html', bg=background) 
+      return redirect('/dialog')
+   obj = session['data'][session['obj_index']]
+   if 'canvas_background' in obj:
+      background = obj['canvas_background']
+      return render_template('canvas.html', bg=background)
+   else:
+      session['context']['comment_txt'] = "Canvas not supported for this question!"
+      session['context']['color'] = 'orange'
+      session.modified = True
+      return redirect('/dialog')
+ 
 @app.route('/graph')
 def graph():
    return render_template('graph.html') 
