@@ -82,6 +82,22 @@ def dialog():
          session['context']['response_txt'] = ""
          session.modified = True
          return render_template('dialog.html', context = session['context'])
+      # Delete button
+      if request.form.get('submit_button') == "delete":
+         if session['obj_index'] < len(session['data']) - 1:
+            del(session['data'][session['obj_index']])
+            obj = session['data'][session['obj_index']]
+            session['context']['request_txt'] = obj["request"]
+            session['context']['comment_txt'] = "" 
+         else:
+            del(session['data'][session['obj_index']])            
+            session['obj_index'] = session['obj_index'] - 1
+            obj = session['data'][session['obj_index']]
+            session['context']['request_txt'] = obj["request"]
+            session['context']['comment_txt'] = "" 
+         session['context']['response_txt'] = ""
+         session.modified = True
+         return render_template('dialog.html', context = session['context'])
       # Submit button  
       if request.form.get('submit_button') == "submit":
          obj = session['data'][session['obj_index']]
