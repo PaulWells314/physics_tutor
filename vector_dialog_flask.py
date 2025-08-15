@@ -106,6 +106,18 @@ def dialog():
          session['context']['response_txt'] = ""
          session.modified = True
          return render_template('dialog.html', context = session['context'])
+      # Insert button
+      if request.form.get('submit_button') == "insert":
+         new_obj = {}
+         new_obj["type"] = "all"
+         new_obj["request"] = "test"
+         new_obj["responses"] = []
+         new_obj["responses"].append("test_response")
+         session['data'].insert(session['obj_index'], new_obj)
+         obj = session['data'][session['obj_index']]
+         session['context']['request_txt'] = obj["request"]
+         session.modified = True
+         return render_template('dialog.html', context = session['context'])
       # Submit button  
       if request.form.get('submit_button') == "submit":
          obj = session['data'][session['obj_index']]
