@@ -363,3 +363,6 @@ def graph_lines():
    session['context']['graph_lines'] = data
    session.modified = True
    return "OK" 
+@app.route('/edit')
+def edit():
+   return render_template('edit.html', context = session['context'])
