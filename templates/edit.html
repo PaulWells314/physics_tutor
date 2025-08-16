@@ -34,14 +34,14 @@ button {
 
 <p><label>Problem: </label><p>
 
-<textarea rows="5"  cols="80">
+<textarea name="problem_text" rows="5"  cols="80">
 {{ context['problem_txt'] }}
 </textarea>
 <div class="button-container">
 <button type="submit" name="submit_button" value="save_problem">Save Problem</button>
 </div>
 <p><label>Question: </label><p>
-<textarea rows="5"  cols="80">
+<textarea name="question_text" rows="5"  cols="80">
 {{ context['request_txt'] }}
 </textarea>
 <div class="button-container">

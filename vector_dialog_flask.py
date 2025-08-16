@@ -370,6 +370,10 @@ def edit():
           session['context']['problem_txt'] = request.form.get('problem_text')
           session['data'][session['obj_index']]["description"] = session['context']['problem_txt']
           session.modified = True
+       if request.form.get('submit_button') == "save_question": 
+          session['context']['request_txt'] = request.form.get('question_text')
+          session['data'][session['obj_index']]["request"] = session['context']['request_txt']
+          session.modified = True
    elif request.method == 'GET':
        pass 
    return render_template('edit.html', context = session['context'])
