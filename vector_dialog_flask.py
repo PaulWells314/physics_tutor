@@ -53,10 +53,10 @@ def dialog():
    
    if request.method == 'POST':
       if 'data' not in session:
-         session['context']['color'] = 'orange'
-         session['context']['comment_txt'] = "Use Load to load problem!"
+         session['data'] = []
+         init_context(session)
+         session['context']['comment_txt'] = "Problem not loaded: creating from scratch"
          session.modified = True
-         return render_template('dialog.html', context = session['context'])
 
       # Next button
       if request.form.get('submit_button') == "next":
