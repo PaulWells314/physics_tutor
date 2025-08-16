@@ -363,6 +363,13 @@ def graph_lines():
    session['context']['graph_lines'] = data
    session.modified = True
    return "OK" 
-@app.route('/edit')
+@app.route('/edit', methods = ['POST', 'GET'])
 def edit():
+   if request.method == 'POST':
+       if request.form.get('submit_button') == "save_problem": 
+          session['context']['problem_txt'] = request.form.get('problem_text')
+          session['data'][session['obj_index']]["description"] = session['context']['problem_txt']
+          session.modified = True
+   elif request.method == 'GET':
+       pass 
    return render_template('edit.html', context = session['context'])
