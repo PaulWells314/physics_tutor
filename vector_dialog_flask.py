@@ -383,5 +383,14 @@ def edit():
           session['context']['response_txt'] = ""
           session.modified = True
    elif request.method == 'GET':
-       pass 
+      if 'data' not in session:
+          session['context']['comment_txt'] = "No data"
+          session['context']['color'] = 'orange'
+          session.modified = True
+          return redirect('/dialog')
+      elif not session['data']:
+          session['context']['comment_txt'] = "Empty data"
+          session['context']['color'] = 'orange'
+          session.modified = True
+          return redirect('/dialog')
    return render_template('edit.html', context = session['context'])
