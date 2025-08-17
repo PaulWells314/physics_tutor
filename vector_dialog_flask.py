@@ -380,6 +380,7 @@ def edit():
           session.modified = True
        if request.form.get('submit_button') == "delete_responses": 
           session['data'][session['obj_index']]["responses"] = []
+          session['context']['response_txt'] = ""
           session.modified = True
    elif request.method == 'GET':
        pass 
