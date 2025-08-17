@@ -110,9 +110,8 @@ def dialog():
       if request.form.get('submit_button') == "insert":
          new_obj = {}
          new_obj["type"] = "all"
-         new_obj["request"] = "test"
+         new_obj["request"] = ""
          new_obj["responses"] = []
-         new_obj["responses"].append("test_response")
          session['data'].insert(session['obj_index'], new_obj)
          obj = session['data'][session['obj_index']]
          session['context']['request_txt'] = obj["request"]
@@ -373,6 +372,14 @@ def edit():
        if request.form.get('submit_button') == "save_question": 
           session['context']['request_txt'] = request.form.get('question_text')
           session['data'][session['obj_index']]["request"] = session['context']['request_txt']
+          session.modified = True
+       if request.form.get('submit_button') == "save_response": 
+          if "responses" not in session['data'][session['obj_index']]:
+             session['data'][session['obj_index']]["responses"] = []
+          session['data'][session['obj_index']]["responses"].append(request.form.get('response_text'))
+          session.modified = True
+       if request.form.get('submit_button') == "delete_responses": 
+          session['data'][session['obj_index']]["responses"] = []
           session.modified = True
    elif request.method == 'GET':
        pass 
