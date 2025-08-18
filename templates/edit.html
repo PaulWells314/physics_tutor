@@ -40,6 +40,16 @@ button {
 <div class="button-container">
 <button type="submit" name="submit_button" value="save_problem">Save Problem</button>
 </div>
+<div>
+<p><label>Question Type: </label><p>
+<select name="options">
+   <option value="all" selected>all</option>
+   <option value="paint">paint</option>
+   <option value="equation">equation</option>
+   <option value="vectors">vectors</option>
+   <option value="graph">graph</option>
+</select>
+</div>
 <p><label>Question: </label><p>
 <textarea name="question_text" rows="5"  cols="80">
 {{ context['request_txt'] }}

@@ -184,7 +184,9 @@ def dialog():
                similarity, idx = ml.retrieve_best_match(user_str, vector_db)
                comment_txt = obj["responses"][idx]["comment"] 
          if req_type == "equation":
-            ref_eqn  = sympify(obj["equation"])
+            # Current restriction to one equation per question
+            eqn_txt =  obj["responses"][0]
+            ref_eqn  = sympify(eqn_txt)
             try:
                user_eqn = sympify(user_str) 
             except SympifyError:
@@ -195,10 +197,10 @@ def dialog():
                comment_txt = "equation error"
             else:
                 if 0 == (user_eqn-ref_eqn):
-                   comment_txt = "equation matches {0}".format(obj["equation"])
+                   comment_txt = "equation matches {0}".format(eqn_txt)
                 else:
                    session['context']['color'] = 'red'
-                   comment_txt = "equation does not match {0}".format(obj["equation"])
+                   comment_txt = "equation does not match {0}".format(eqn_txt)
          if req_type == "vectors":
             # Use canvas to create vectors
             if 'vectors' not in session['context']:
@@ -380,6 +382,8 @@ def graph_lines():
 @app.route('/edit', methods = ['POST', 'GET'])
 def edit():
    if request.method == 'POST':
+       selected_option =  request.form.get('options')
+       session['data'][session['obj_index']]["type"] = selected_option.rstrip()
        if request.form.get('submit_button') == "save_problem": 
           session['context']['problem_txt'] = request.form.get('problem_text').rstrip()
           session.modified = True
