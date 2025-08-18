@@ -26,7 +26,8 @@ def init():
       selected_option =  request.form.get('options')
       # Load button
       if request.form.get('submit_button') == "load":
-          with open(selected_option) as fin:
+          filename = "./problems/" + selected_option
+          with open(filename) as fin:
              data = json.load(fin)
              session['data'] = data['request_list'] 
              session['obj_index'] = 0
@@ -44,7 +45,7 @@ def init():
       session['obj_index'] = 0
       init_context(session) 
       session['selected'] = ""
-      directory_path = './'
+      directory_path = './problems'
       session['context']['files'] = os.listdir(directory_path)
       return render_template('index.html', context = session['context'])
 @app.route('/dialog', methods = ['POST', 'GET'])
@@ -411,6 +412,7 @@ def edit():
 def store():
    if request.method == 'POST':
       filename = request.form.get('filename')
+      filename ="./problems/" + filename
       with open(filename, "w") as json_file:
          out_dict = {}
          out_dict['description'] = session['context']['problem_txt']
