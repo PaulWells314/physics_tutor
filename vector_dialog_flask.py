@@ -378,17 +378,16 @@ def graph_lines():
 def edit():
    if request.method == 'POST':
        if request.form.get('submit_button') == "save_problem": 
-          session['context']['problem_txt'] = request.form.get('problem_text')
-          session['data'][session['obj_index']]["description"] = session['context']['problem_txt']
+          session['context']['problem_txt'] = request.form.get('problem_text').rstrip()
           session.modified = True
        if request.form.get('submit_button') == "save_question": 
           session['context']['request_txt'] = request.form.get('question_text')
-          session['data'][session['obj_index']]["request"] = session['context']['request_txt']
+          session['data'][session['obj_index']]["request"] = session['context']['request_txt'].rstrip()
           session.modified = True
        if request.form.get('submit_button') == "save_response": 
           if "responses" not in session['data'][session['obj_index']]:
              session['data'][session['obj_index']]["responses"] = []
-          session['data'][session['obj_index']]["responses"].append(request.form.get('response_text'))
+          session['data'][session['obj_index']]["responses"].append(request.form.get('response_text').rstrip())
           session.modified = True
        if request.form.get('submit_button') == "delete_responses": 
           session['data'][session['obj_index']]["responses"] = []
@@ -411,5 +410,8 @@ def store():
    if request.method == 'POST':
       filename = request.form.get('filename')
       with open(filename, "w") as json_file:
-         json.dump(session['data'], json_file, indent=4)
+         out_dict = {}
+         out_dict['description'] = session['context']['problem_txt']
+         out_dict['request_list'] = session['data']
+         json.dump(out_dict, json_file, indent=4)
    return render_template('store.html', context = session['context'])
