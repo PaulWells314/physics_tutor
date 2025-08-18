@@ -406,3 +406,6 @@ def edit():
           session.modified = True
           return redirect('/dialog')
    return render_template('edit.html', context = session['context'])
+@app.route('/store', methods = ['POST', 'GET'])
+def store():
+   return render_template('store.html', context = session['context'])
