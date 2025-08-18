@@ -3,6 +3,7 @@ import json
 import math
 import sys
 import time
+import os
 import argparse
 import ml
 import sympy
@@ -40,10 +41,11 @@ def init():
              session.modified = True
              return render_template('index.html', context = session['context'])
    elif request.method == "GET":
-      if 'context' not in session:
-         session['obj_index'] = 0
-         init_context(session) 
-         session['selected'] = ""
+      session['obj_index'] = 0
+      init_context(session) 
+      session['selected'] = ""
+      directory_path = './'
+      session['context']['files'] = os.listdir(directory_path)
       return render_template('index.html', context = session['context'])
 @app.route('/dialog', methods = ['POST', 'GET'])
 def dialog():

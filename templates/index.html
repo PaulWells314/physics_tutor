@@ -35,8 +35,9 @@ button {
 <p><a href="{{ url_for('dialog') }}">Dialog</a></p>
 
 <select name="options" >
-  <option value="ramp.json" selected>Block on Ramp</option>
-  <option value="output.json" selected>Custom</option>
+  {% for file in context['files'] %}
+  <option value={{ file }} selected>{{ file }}</option>
+  {% endfor %}
 </select>
 <p><label>Problem: </label><p>
 
