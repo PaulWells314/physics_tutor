@@ -408,4 +408,8 @@ def edit():
    return render_template('edit.html', context = session['context'])
 @app.route('/store', methods = ['POST', 'GET'])
 def store():
+   if request.method == 'POST':
+      filename = request.form.get('filename')
+      with open(filename, "w") as json_file:
+         json.dump(session['data'], json_file, indent=4)
    return render_template('store.html', context = session['context'])

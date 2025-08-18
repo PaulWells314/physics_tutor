@@ -32,9 +32,8 @@ button {
 
 <form method = "post">
 <p><a href="{{ url_for('dialog') }}">Dialog</a></p>
-
-<textarea rows="1"  cols="80">
-{{ context['store_file'] }}
+<label>Filename: </label>
+<textarea name="filename" rows="1"  cols="80">
 </textarea>
 <div class="button-container">
 <button type="submit" name="submit_button" value="store">Store</button>                                           
