@@ -118,6 +118,7 @@ def dialog():
          session['data'].insert(session['obj_index'], new_obj)
          obj = session['data'][session['obj_index']]
          session['context']['request_txt'] = obj["request"]
+         session['context']['type'] = new_obj["type"]
          session.modified = True
          return render_template('dialog.html', context = session['context'])
       # Append button
@@ -130,6 +131,7 @@ def dialog():
          session['obj_index'] = len(session['data']) - 1
          obj = session['data'][session['obj_index']]
          session['context']['request_txt'] = obj["request"]
+         session['context']['type'] = new_obj["type"]
          session.modified = True
          return render_template('dialog.html', context = session['context'])
       # Submit button  
@@ -382,19 +384,19 @@ def graph_lines():
 @app.route('/edit', methods = ['POST', 'GET'])
 def edit():
    if request.method == 'POST':
-       selected_option =  request.form.get('options')
-       session['data'][session['obj_index']]["type"] = selected_option.rstrip()
        if request.form.get('submit_button') == "save_problem": 
-          session['context']['problem_txt'] = request.form.get('problem_text').rstrip()
+          session['context']['problem_txt'] = request.form.get('problem_text').strip()
           session.modified = True
        if request.form.get('submit_button') == "save_question": 
-          session['context']['request_txt'] = request.form.get('question_text')
-          session['data'][session['obj_index']]["request"] = session['context']['request_txt'].rstrip()
+          session['context']['request_txt'] = request.form.get('question_text').strip()
+          session['context']['type'] = request.form.get('type_txt').strip()
+          session['data'][session['obj_index']]["type"] = session['context']['type']
+          session['data'][session['obj_index']]["request"] = session['context']['request_txt'].strip()
           session.modified = True
        if request.form.get('submit_button') == "save_response": 
           if "responses" not in session['data'][session['obj_index']]:
              session['data'][session['obj_index']]["responses"] = []
-          session['data'][session['obj_index']]["responses"].append(request.form.get('response_text').rstrip())
+          session['data'][session['obj_index']]["responses"].append(request.form.get('response_text').strip())
           session.modified = True
        if request.form.get('submit_button') == "delete_responses": 
           session['data'][session['obj_index']]["responses"] = []

@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<style
->
+<style>
 .button-container {
  margin-top: 10px;
  display: flex;
  justify-content: center;
  gap: 10px;
+}
+.aligned-elements {
+ display:  inline-block;
+ vertical-align: middle;
 }
 
 form {
@@ -34,31 +37,36 @@ button {
 
 <p><label>Problem: </label><p>
 
-<textarea name="problem_text" rows="5"  cols="80">
-{{ context['problem_txt'] }}
-</textarea>
+<textarea name="problem_text" rows="5"  cols="80">{{ context['problem_txt'] }}</textarea>
 <div class="button-container">
 <button type="submit" name="submit_button" value="save_problem">Save Problem</button>
 </div>
 <div>
 <p><label>Question Type: </label><p>
-<select name="options">
+<textarea class="aligned-elements" id="type_txt" name="type_txt" rows="1" cols="16">{{ context['type'] }}</textarea>
+<select class="aligned-elements" id="type_select" name="options">
    <option value="all" selected>all</option>
    <option value="paint">paint</option>
    <option value="equation">equation</option>
    <option value="vectors">vectors</option>
    <option value="graph">graph</option>
 </select>
+<script>
+   const type_select=document.getElementById('type_select')
+   const type_txt=document.getElementById('type_txt')
+
+   type_select.addEventListener('change', function() {
+      type_txt.value = this.value;
+   });
+</script>
 </div>
 <p><label>Question: </label><p>
-<textarea name="question_text" rows="5"  cols="80">
-{{ context['request_txt'] }}
-</textarea>
+<textarea name="question_text" rows="5"  cols="80"> {{ context['request_txt'] }}</textarea>
 <div class="button-container">
 <button type="submit" name="submit_button" value="save_question">Save Question</button>
 </div>
 <p><label>Response: </label><p>
-<textarea name="response_text" rows="5"  cols="80"></textarea>
+<textarea name="response_text" rows="5"  cols="80">{{ session['context']['response_txt'] }}</textarea>
 <div class="button-container">
 <button type="submit" name="submit_button" value="save_response">Save Response</button>
 <button type="submit" name="submit_button" value="delete_responses"/>Delete Responses</button>
