@@ -413,7 +413,10 @@ def edit():
           session['context']['color'] = 'orange'
           session.modified = True
           return redirect('/dialog')
-   return render_template('edit.html', context = session['context'])
+   responses = ""
+   if 'data' in session and "responses" in session['data'][session['obj_index']]:
+      responses = json.dumps(session['data'][session['obj_index']]["responses"]) 
+   return render_template('edit.html', context = session['context'], responses = responses)
 @app.route('/store', methods = ['POST', 'GET'])
 def store():
    if request.method == 'POST':
