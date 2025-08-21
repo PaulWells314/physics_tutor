@@ -46,7 +46,23 @@ button {
 </textarea>
 <div class="button-container">
 <button type="submit" name="submit_button" value="load">Load</button>                                           
-</div>       
+</div> 
+<div>
+<p><label>Mode: </label><p>
+<select name="mode" onchange="this.form.submit()">
+  {% if  disp  == "teacher" %}
+  {
+  <option value="teacher" selected>Teacher</option>
+  <option value="student">Student</option>
+  }
+  {% else %}
+  {
+  <option value="teacher">Teacher</option>
+  <option value="student" selected>Student</option>
+  }
+  {% endif %}
+</select>
+</div>      
 </form>
 </body>
 </html>

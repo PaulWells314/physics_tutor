@@ -22,8 +22,10 @@ def init_context(session):
    
 @app.route('/', methods = ['POST', 'GET'])
 def init():
+   selected_option =  request.form.get('options')
+   session['mode']   =  request.form.get('mode')
+   print(session['mode'])
    if request.method == 'POST':
-      selected_option =  request.form.get('options')
       # Load button
       if request.form.get('submit_button') == "load":
           filename = "./problems/" + selected_option
@@ -39,17 +41,27 @@ def init():
              # First request 
              if "request" in obj:
                 session['context']['request_txt'] = obj["request"] 
-             session.modified = True
-             return render_template('index.html', context = session['context'])
+      session.modified = True
+      return render_template('index.html', context = session['context'], disp = session['mode'])
    elif request.method == "GET":
       session['obj_index'] = 0
+      if 'mode' not in session:
+         session['mode'] = 'student'
       init_context(session) 
       session['selected'] = ""
       directory_path = './problems'
       session['context']['files'] = os.listdir(directory_path)
-      return render_template('index.html', context = session['context'])
+      return render_template('index.html', context = session['context'], disp = session['mode'])
 @app.route('/dialog', methods = ['POST', 'GET'])
 def dialog():
+   if 'mode' in session:
+      if session['mode'] == 'teacher':
+         disp = 'flex'
+      else:
+         disp = 'none'
+   else:
+      disp = 'none'
+     
    # Return from canvas?
    if request.referrer and request.referrer.split("/")[-1] == "canvas":
       return render_template('dialog.html', context = session['context'])
@@ -72,7 +84,7 @@ def dialog():
             session['context']['comment_txt'] = "End of Questions" 
          session['context']['response_txt'] = ""
          session.modified = True
-         return render_template('dialog.html', context = session['context'])
+         return render_template('dialog.html', context = session['context'], disp = disp)
       # Previous button
       if request.form.get('submit_button') == "previous":
          if session['obj_index'] > 0:
@@ -84,7 +96,7 @@ def dialog():
             session['context']['comment_txt'] = "First Question" 
          session['context']['response_txt'] = ""
          session.modified = True
-         return render_template('dialog.html', context = session['context'])
+         return render_template('dialog.html', context = session['context'], disp = disp)
       # Delete button
       if request.form.get('submit_button') == "delete":
          if len(session['data']) == 0:
@@ -108,7 +120,7 @@ def dialog():
             session['context']['comment_txt'] = "" 
          session['context']['response_txt'] = ""
          session.modified = True
-         return render_template('dialog.html', context = session['context'])
+         return render_template('dialog.html', context = session['context'], disp = disp)
       # Insert button
       if request.form.get('submit_button') == "insert":
          new_obj = {}
@@ -120,7 +132,7 @@ def dialog():
          session['context']['request_txt'] = obj["request"]
          session['context']['type'] = new_obj["type"]
          session.modified = True
-         return render_template('dialog.html', context = session['context'])
+         return render_template('dialog.html', context = session['context'], disp = disp)
       # Append button
       if request.form.get('submit_button') == "append":
          new_obj = {}
@@ -133,7 +145,7 @@ def dialog():
          session['context']['request_txt'] = obj["request"]
          session['context']['type'] = new_obj["type"]
          session.modified = True
-         return render_template('dialog.html', context = session['context'])
+         return render_template('dialog.html', context = session['context'], disp = disp)
       # Submit button  
       if request.form.get('submit_button') == "submit":
          obj = session['data'][session['obj_index']]
@@ -142,7 +154,7 @@ def dialog():
                session['context']['color'] = 'orange'
                session['context']['comment_txt'] = "Please press Next before Submit" 
                session.modified = True
-               return render_template('dialog.html', context = session['context'])
+               return render_template('dialog.html', context = session['context'], disp = disp)
          vector_db = []
          comment_txt=""
          req_type = obj["type"]
@@ -176,7 +188,7 @@ def dialog():
                 session['context']['comment_txt'] = comment_txt
                 session['context']['color'] = 'orange'
                 session.modified = True
-                return render_template('dialog.html', context = session['context'])
+                return render_template('dialog.html', context = session['context'], disp = disp)
             if "responses" in obj: 
                for response in obj["responses"]:
                   response_text    = response["text"]
@@ -210,7 +222,7 @@ def dialog():
                session['context']['color'] = 'orange'
                session['context']['comment_txt'] = comment_txt
                session.modified = True
-               return render_template('dialog.html', context = session['context'])
+               return render_template('dialog.html', context = session['context'], disp = disp)
             print(session['context']['vectors'])
             print(obj["responses"])
             comment_txt = ""
@@ -229,7 +241,7 @@ def dialog():
                comment_txt += "Too many user vectors"
                session['context']['comment_txt'] = comment_txt
                session.modified = True
-               return render_template('dialog.html', context = session['context'])
+               return render_template('dialog.html', context = session['context'], disp = disp)
             similarities, perm = ml.retrieve_max_permutation(user_responses, vector_db)
             for idx, resp in enumerate(user_responses):
                pidx = perm[idx]
@@ -255,7 +267,7 @@ def dialog():
                session['context']['color'] = 'orange'
                session['context']['comment_txt'] = comment_txt
                session.modified = True
-               return render_template('dialog.html', context = session['context'])
+               return render_template('dialog.html', context = session['context'], disp = disp)
             comment_txt = ""
             def graph_unique_array(f):
                is_first = True
@@ -284,7 +296,7 @@ def dialog():
                comment_txt = comment_txt + "number of captured lines does not equal number of expected lines"
                session['context']['comment_txt'] = comment_txt
                session.modified = True
-               return render_template('dialog.html', context = session['context']) 
+               return render_template('dialog.html', context = session['context'], disp = disp) 
             for index, line in enumerate(session['context']['graph_lines']):
                for segment in line:
                   if segment["x2"] ==  segment["x1"]:
@@ -292,7 +304,7 @@ def dialog():
                      session['context']['color'] = 'orange'
                      session['context']['comment_txt'] = comment_txt
                      session.modified = True
-                     return render_template('dialog.html', context = session['context'])
+                     return render_template('dialog.html', context = session['context'], disp = disp)
                f0 = []
                for segment in line:
                   graph_parse_array(f0, segment["y1"], 2)
@@ -339,7 +351,7 @@ def dialog():
 
          session['context']['comment_txt'] = comment_txt
          session.modified = True
-         return render_template('dialog.html', context = session['context'])
+         return render_template('dialog.html', context = session['context'], disp = disp)
 
    elif request.method == "GET":
       if 'context' not in session:
@@ -347,7 +359,7 @@ def dialog():
          init_context(session) 
          session['selected'] = ""
             
-      return render_template('dialog.html', context = session['context'])
+      return render_template('dialog.html', context = session['context'], disp = disp)
  
 @app.route('/canvas')
 def canvas():

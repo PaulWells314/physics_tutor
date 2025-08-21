@@ -25,6 +25,15 @@ button {
  background-color: #4CAF50;
  color: #fff;
 }
+.edit-button {
+ padding: 10px;
+ width:   100px;
+ border-radius:   8px;
+ border: none;
+ background-color: red;
+ color: #fff;
+ display: {{ disp }};
+}
 </style>
 </head>
 <body>
@@ -57,9 +66,9 @@ button {
 <button type="submit" name="submit_button" value="next">Next</button>
 <button type="submit" name="submit_button" value="previous">Previous</button>
 <button type="submit" name="submit_button" value="submit">Submit</button>
-<button type="submit" name="submit_button" value="insert" style="background-color: red;">Insert</button>
-<button type="submit" name="submit_button" value="append" style="background-color: red;">Append</button>
-<button type="submit" name="submit_button" value="delete" style="background-color: red;">Delete</button>
+<button class="edit-button" type="submit" name="submit_button" value="insert">Insert</button>
+<button class="edit-button" type="submit" name="submit_button" value="append">Append</button>
+<button class="edit-button" type="submit" name="submit_button" value="delete">Delete</button>
 </div>
 </form>
 </body>
