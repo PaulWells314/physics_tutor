@@ -2,6 +2,8 @@ from openai import OpenAI
 import math
 import ollama
 from itertools import permutations
+import numpy as np
+from scipy.optimize import linear_sum_assignment
 
 EMBEDDING_MODEL = 'hf.co/CompendiumLabs/bge-base-en-v1.5-gguf'
 
@@ -33,24 +35,25 @@ def retrieve_best_match(query, vector_db):
 # Calculating for every permulation is unbiased but slow.
 # Should probably limit number of responses or use different algorithm for large number of responses.
 def retrieve_max_permutation(queries, vector_db):
+  num_refs    = len(vector_db)
+  num_queries = len(queries)
+  cost_matrix = np.zeros((num_refs, num_refs))
   query_embeddings = []
   for q in queries:
      query_embeddings.append(ollama.embed(model=EMBEDDING_MODEL, input=q)['embeddings'][0])
-  perms = permutations(list(range(len(vector_db))))
-  max_similarity = -1
-  max_p          = -1
-  for p in perms:
-     similarity = 0
-     for idx, q in enumerate(query_embeddings):
-        chunk, embedding = vector_db[p[idx]]
-        similarity = similarity + cosine_similarity(q, embedding)
-     if similarity > max_similarity:
-        max_similarity = similarity
-        max_p = p
+
+  for i in range(num_queries):
+     for j in range(num_refs):
+        chunk, embedding = vector_db[j]
+        similarity = cosine_similarity(query_embeddings[i], embedding)
+        cost_matrix[i,j] = 1.0 - similarity
+  row_ind, col_ind = linear_sum_assignment(cost_matrix) 
+  print(row_ind)
+  print(col_ind)  
   # Store similarities for each query for best permutation
   similarities = []
   for idx, q in enumerate(query_embeddings):
-     chunk, embedding = vector_db[max_p[idx]]
+     chunk, embedding = vector_db[col_ind[idx]]
      similarities.append(cosine_similarity(q, embedding))
 
-  return similarities, max_p
+  return similarities, col_ind 
