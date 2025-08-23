@@ -18,6 +18,8 @@ def init_context(session):
     session['context']['request_txt'] = ""
     session['context']['response_txt'] = ""
     session['context']['comment_txt'] = ""
+    directory_path = './problems'
+    session['context']['files'] = os.listdir(directory_path)
     return
    
 @app.route('/', methods = ['POST', 'GET'])
@@ -49,8 +51,6 @@ def init():
          session['mode'] = 'student'
       init_context(session) 
       session['selected'] = ""
-      directory_path = './problems'
-      session['context']['files'] = os.listdir(directory_path)
       return render_template('index.html', context = session['context'], disp = session['mode'])
 @app.route('/dialog', methods = ['POST', 'GET'])
 def dialog():
