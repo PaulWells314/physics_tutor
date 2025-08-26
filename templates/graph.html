@@ -22,11 +22,12 @@
    }
 </style>
 <body>
-<p><a href="{{ url_for('dialog') }}" onclick="dialogClick()">Dialog</a></p>
+<p><a href="{{ url_for('dialog') }}">Dialog</a></p>
 <div class="container">
    <canvas id="myCanvas" width="600" height="600" style="border:1px solid grey"></canvas>
    <div class="button-group">
       <button onclick="set_line()">Store Line</button>
+      <button onclick="dialogClick()">Store All</button>
    </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

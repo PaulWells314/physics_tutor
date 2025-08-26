@@ -26,7 +26,6 @@ def init_context(session):
 def init():
    selected_option =  request.form.get('options')
    session['mode']   =  request.form.get('mode')
-   print(session['mode'])
    if request.method == 'POST':
       # Load button
       if request.form.get('submit_button') == "load":
@@ -64,7 +63,11 @@ def dialog():
      
    # Return from canvas?
    if request.referrer and request.referrer.split("/")[-1] == "canvas":
-      return render_template('dialog.html', context = session['context'])
+      return render_template('dialog.html', context = session['context'], disp=disp)
+
+   # Return from graph?
+   if request.referrer and request.referrer.split("/")[-1] == "graph":
+      return render_template('dialog.html', context = session['context'], disp=disp)
    
    if request.method == 'POST':
       if 'data' not in session:
@@ -223,8 +226,6 @@ def dialog():
                session['context']['comment_txt'] = comment_txt
                session.modified = True
                return render_template('dialog.html', context = session['context'], disp = disp)
-            print(session['context']['vectors'])
-            print(obj["responses"])
             comment_txt = ""
             # Add all possible model responses to request to vector database
             user_responses = []
@@ -288,7 +289,6 @@ def dialog():
                   f.append(1)
                else:
                   f.append(-1)  
-            print(session['context']['graph_lines'])
             user_line_num = len(session['context']['graph_lines'])
             ref_line_num  = len(obj["responses"]) 
             if user_line_num != ref_line_num:
@@ -309,8 +309,6 @@ def dialog():
                for segment in line:
                   graph_parse_array(f0, segment["y1"], 2)
                f0_filtered = graph_unique_array(f0)
-               print(f0_filtered)
-               print(obj["responses"][index])
                if f0_filtered ==  obj["responses"][index]["f0"]:
                   comment_txt = comment_txt + " f0 match"
                else:
@@ -326,8 +324,6 @@ def dialog():
                   grads.append(g)
                   deltas.append((segment["x2"] + segment["x1"])/2.0)
                f1_filtered = graph_unique_array(f1)
-               print(f1_filtered)
-               print(obj["responses"][index])
                if f1_filtered ==  obj["responses"][index]["f1"]:
                   comment_txt = comment_txt + " f1 match"
                else: 
@@ -341,8 +337,6 @@ def dialog():
                for second_derivative in second_derivatives:
                   graph_parse_array(f2, second_derivative, 0.0001)
                f2_filtered = graph_unique_array(f2)
-               print(f2_filtered)
-               print(obj["responses"][index])
                if f2_filtered ==  obj["responses"][index]["f2"]:
                   comment_txt = comment_txt + " f2 match"
                else:
