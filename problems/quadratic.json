@@ -1,0 +1,16 @@
+{
+   "description": "Solve the equation x^2 = 2^0.5 * x",
+   "request_list": [
+   {
+      "request": "What is the first step?",
+      "type": "all",
+      "responses": ["Bring all terms to the left side of the equation"]
+   },
+   {
+      "request": "What is the left side of the equation?",
+      "type": "expression",
+      "responses": 
+      ["x^2 - 2^0.5 * x"]
+   }
+   ]
+}

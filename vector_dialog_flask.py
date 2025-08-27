@@ -218,6 +218,26 @@ def dialog():
                 else:
                    session['context']['color'] = 'red'
                    comment_txt = "equation does not match {0}".format(eqn_txt)
+         if req_type == "expression":
+            # Current restriction to one expression per question
+            eqn_txt =  obj["responses"][0]
+            ref_eqn  = sympify(eqn_txt)
+            ref_expr  = srepr(ref_eqn)
+            try:
+               user_eqn = sympify(user_str) 
+               user_expr = srepr(user_eqn)
+            except SympifyError:
+               session['context']['color'] = 'orange'
+               comment_txt = "mistake in equation format (need to use * for all multiplies)"
+            except Exception as e:
+               session['context']['color'] = 'orange'
+               comment_txt = "equation error"
+            else:
+                if user_expr == ref_expr:
+                   comment_txt = "equation matches {0}".format(eqn_txt)
+                else:
+                   session['context']['color'] = 'red'
+                   comment_txt = "equation does not match {0}".format(eqn_txt)
          if req_type == "vectors":
             # Use canvas to create vectors
             if 'vectors' not in session['context']:
