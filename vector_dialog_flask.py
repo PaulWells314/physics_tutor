@@ -221,6 +221,15 @@ def dialog():
          if req_type == "expression":
             # Current restriction to one expression per question
             eqn_txt =  obj["responses"][0]
+            # Extract exprrssion from equation?
+            if 'extract' in obj:
+               if obj['extract'] == "left":
+                  eqn_txt  = "".join(eqn_txt.split("=")[0])  
+                  user_str = "".join(user_str.split("=")[0]) 
+               else:
+                  eqn_txt  = "".join(eqn_txt.split("=")[1])  
+                  user_str = "".join(user_str.split("=")[1]) 
+ 
             ref_eqn  = sympify(eqn_txt)
             ref_expr  = srepr(ref_eqn)
             try:
