@@ -7,6 +7,7 @@ import os
 import argparse
 import ml
 import sympy
+import numpy as np
 from sympy import *
 
 app = Flask(__name__)
@@ -228,9 +229,10 @@ def dialog():
                session['context']['color'] = 'red'
                comment_txt += "too many user equations\n" 
             else:
+               ref_mask = np.zeros(num_ref)
                for  user_eqn in user_responses:
                   is_match = False
-                  for eqn_txt in obj["responses"]:
+                  for index, eqn_txt in enumerate(obj["responses"]):
                      if splitter == "":
                         eqn_txt_l = eqn_txt
                         user_eqn_l = user_eqn
@@ -261,8 +263,9 @@ def dialog():
                         session['context']['color'] = 'orange'
                         comment_txt += "equation error"
                      else:
-                        if (user_expr_l == ref_expr_l) and (user_expr_r == ref_expr_r) :
+                        if (user_expr_l == ref_expr_l) and (user_expr_r == ref_expr_r) and (ref_mask[index] == 0) :
                            is_match = True
+                           ref_mask[index] = 1
                         else:
                            pass
                   if is_match:
