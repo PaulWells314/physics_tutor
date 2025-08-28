@@ -230,7 +230,12 @@ def dialog():
                comment_txt += "too many user equations\n" 
             else:
                ref_mask = np.zeros(num_ref)
-               for  user_eqn in user_responses:
+               for  user_eqn in user_responses:  
+                  #splitter missing?
+                  if (splitter != "") and (-1 == user_eqn.find(splitter)):
+                     session['context']['color'] = 'orange'
+                     comment_txt += " " + splitter + " not present!"
+                     continue
                   is_match = False
                   for index, eqn_txt in enumerate(obj["responses"]):
                      if splitter == "":
