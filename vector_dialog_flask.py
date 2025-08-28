@@ -221,21 +221,33 @@ def dialog():
          if req_type == "expression":
             comment_txt = ""
             user_responses = user_str.splitlines()
+            splitter = obj['splitter']
             for  user_eqn in user_responses:
                is_match = False
                for eqn_txt in obj["responses"]:
-                  eqn_txt_l  = "".join(eqn_txt.split("=")[0])  
-                  user_eqn_l = "".join(user_eqn.split("=")[0]) 
-                  eqn_txt_r  = "".join(eqn_txt.split("=")[1])  
-                  user_eqn_r = "".join(user_eqn.split("=")[1]) 
- 
+                  if splitter == "":
+                     eqn_txt_l = eqn_txt
+                     user_eqn_l = user_eqn
+                     eqn_txt_r  = ""
+                     user_eqn_r = "" 
+                  else: 
+                     eqn_txt_l  = "".join(eqn_txt.split(splitter)[0])  
+                     user_eqn_l = "".join(user_eqn.split(splitter)[0])
+                     eqn_txt_r  = "".join(eqn_txt.split(splitter)[1])  
+                     user_eqn_r = "".join(user_eqn.split(splitter)[1]) 
                   ref_eqn_l  = sympify(eqn_txt_l)
                   ref_expr_l  = srepr(ref_eqn_l)
-                  ref_eqn_r  = sympify(eqn_txt_r)
-                  ref_expr_r  = srepr(ref_eqn_r)
+                  if splitter != "":
+                     ref_eqn_r  = sympify(eqn_txt_r)
+                     ref_expr_r  = srepr(ref_eqn_r)
+                  else:
+                     ref_expr_r = ""
                   try:
                      user_expr_l = srepr(sympify(user_eqn_l))
-                     user_expr_r = srepr(sympify(user_eqn_r))
+                     if splitter != "":
+                        user_expr_r = srepr(sympify(user_eqn_r))
+                     else:
+                        user_expr_r = ""
                   except SympifyError:
                      session['context']['color'] = 'orange'
                      comment_txt += "mistake in equation format (need to use * for all multiplies)"
