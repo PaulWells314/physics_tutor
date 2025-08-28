@@ -224,19 +224,18 @@ def dialog():
             for  user_eqn in user_responses:
                is_match = False
                for eqn_txt in obj["responses"]:
-                  # Extract exprrssion from equation?
-                  if 'extract' in obj:
-                     if obj['extract'] == "left":
-                        eqn_txt  = "".join(eqn_txt.split("=")[0])  
-                        user_eqn = "".join(user_eqn.split("=")[0]) 
-                     else:
-                        eqn_txt  = "".join(eqn_txt.split("=")[1])  
-                        user_eqn = "".join(user_eqn.split("=")[1]) 
+                  eqn_txt_l  = "".join(eqn_txt.split("=")[0])  
+                  user_eqn_l = "".join(user_eqn.split("=")[0]) 
+                  eqn_txt_r  = "".join(eqn_txt.split("=")[1])  
+                  user_eqn_r = "".join(user_eqn.split("=")[1]) 
  
-                  ref_eqn  = sympify(eqn_txt)
-                  ref_expr  = srepr(ref_eqn)
+                  ref_eqn_l  = sympify(eqn_txt_l)
+                  ref_expr_l  = srepr(ref_eqn_l)
+                  ref_eqn_r  = sympify(eqn_txt_r)
+                  ref_expr_r  = srepr(ref_eqn_r)
                   try:
-                     user_expr = srepr(sympify(user_eqn))
+                     user_expr_l = srepr(sympify(user_eqn_l))
+                     user_expr_r = srepr(sympify(user_eqn_r))
                   except SympifyError:
                      session['context']['color'] = 'orange'
                      comment_txt += "mistake in equation format (need to use * for all multiplies)"
@@ -244,7 +243,7 @@ def dialog():
                      session['context']['color'] = 'orange'
                      comment_txt += "equation error"
                   else:
-                     if user_expr == ref_expr:
+                     if (user_expr_l == ref_expr_l) and (user_expr_r == ref_expr_r) :
                         is_match = True
                      else:
                         pass
