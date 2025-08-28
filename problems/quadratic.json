@@ -12,6 +12,18 @@
       "extract" : "left",
       "responses": 
       ["x^2 - 2^0.5 * x = 0"]
+   },
+   {
+      "request": "What is the next step?",
+      "type": "all",
+      "responses": ["Factorize left side of equation"]
+   },
+   {
+      "request": "What is the new equation?",
+      "type": "expression",
+      "extract" : "left",
+      "responses": 
+      ["x * (x - 2^0.5) = 0"]
    }
    ]
 }
