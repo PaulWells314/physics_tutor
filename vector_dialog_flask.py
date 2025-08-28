@@ -219,34 +219,40 @@ def dialog():
                    session['context']['color'] = 'red'
                    comment_txt = "equation does not match {0}".format(eqn_txt)
          if req_type == "expression":
-            # Current restriction to one expression per question
-            eqn_txt =  obj["responses"][0]
-            # Extract exprrssion from equation?
-            if 'extract' in obj:
-               if obj['extract'] == "left":
-                  eqn_txt  = "".join(eqn_txt.split("=")[0])  
-                  user_str = "".join(user_str.split("=")[0]) 
-               else:
-                  eqn_txt  = "".join(eqn_txt.split("=")[1])  
-                  user_str = "".join(user_str.split("=")[1]) 
+            comment_txt = ""
+            user_responses = user_str.splitlines()
+            for  user_eqn in user_responses:
+               is_match = False
+               for eqn_txt in obj["responses"]:
+                  # Extract exprrssion from equation?
+                  if 'extract' in obj:
+                     if obj['extract'] == "left":
+                        eqn_txt  = "".join(eqn_txt.split("=")[0])  
+                        user_eqn = "".join(user_eqn.split("=")[0]) 
+                     else:
+                        eqn_txt  = "".join(eqn_txt.split("=")[1])  
+                        user_eqn = "".join(user_eqn.split("=")[1]) 
  
-            ref_eqn  = sympify(eqn_txt)
-            ref_expr  = srepr(ref_eqn)
-            try:
-               user_eqn = sympify(user_str) 
-               user_expr = srepr(user_eqn)
-            except SympifyError:
-               session['context']['color'] = 'orange'
-               comment_txt = "mistake in equation format (need to use * for all multiplies)"
-            except Exception as e:
-               session['context']['color'] = 'orange'
-               comment_txt = "equation error"
-            else:
-                if user_expr == ref_expr:
-                   comment_txt = "equation matches {0}".format(eqn_txt)
-                else:
-                   session['context']['color'] = 'red'
-                   comment_txt = "equation does not match {0}".format(eqn_txt)
+                  ref_eqn  = sympify(eqn_txt)
+                  ref_expr  = srepr(ref_eqn)
+                  try:
+                     user_expr = srepr(sympify(user_eqn))
+                  except SympifyError:
+                     session['context']['color'] = 'orange'
+                     comment_txt += "mistake in equation format (need to use * for all multiplies)"
+                  except Exception as e:
+                     session['context']['color'] = 'orange'
+                     comment_txt += "equation error"
+                  else:
+                     if user_expr == ref_expr:
+                        is_match = True
+                     else:
+                        pass
+               if is_match:
+                  comment_txt += "equation {0} matches\n".format(user_eqn)
+               else:
+                  session['context']['color'] = 'red'
+                  comment_txt += "equation {0} does not match\n".format(user_eqn)
          if req_type == "vectors":
             # Use canvas to create vectors
             if 'vectors' not in session['context']:
