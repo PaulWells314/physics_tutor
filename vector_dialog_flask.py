@@ -222,48 +222,57 @@ def dialog():
             comment_txt = ""
             user_responses = user_str.splitlines()
             splitter = obj['splitter']
-            for  user_eqn in user_responses:
-               is_match = False
-               for eqn_txt in obj["responses"]:
-                  if splitter == "":
-                     eqn_txt_l = eqn_txt
-                     user_eqn_l = user_eqn
-                     eqn_txt_r  = ""
-                     user_eqn_r = "" 
-                  else: 
-                     eqn_txt_l  = "".join(eqn_txt.split(splitter)[0])  
-                     user_eqn_l = "".join(user_eqn.split(splitter)[0])
-                     eqn_txt_r  = "".join(eqn_txt.split(splitter)[1])  
-                     user_eqn_r = "".join(user_eqn.split(splitter)[1]) 
-                  ref_eqn_l  = sympify(eqn_txt_l)
-                  ref_expr_l  = srepr(ref_eqn_l)
-                  if splitter != "":
-                     ref_eqn_r  = sympify(eqn_txt_r)
-                     ref_expr_r  = srepr(ref_eqn_r)
-                  else:
-                     ref_expr_r = ""
-                  try:
-                     user_expr_l = srepr(sympify(user_eqn_l))
+            num_user = len(user_responses)
+            num_ref  = len(obj["responses"])
+            if num_user > num_ref:
+               session['context']['color'] = 'red'
+               comment_txt += "too many user equations\n" 
+            else:
+               for  user_eqn in user_responses:
+                  is_match = False
+                  for eqn_txt in obj["responses"]:
+                     if splitter == "":
+                        eqn_txt_l = eqn_txt
+                        user_eqn_l = user_eqn
+                        eqn_txt_r  = ""
+                        user_eqn_r = "" 
+                     else: 
+                        eqn_txt_l  = "".join(eqn_txt.split(splitter)[0])  
+                        user_eqn_l = "".join(user_eqn.split(splitter)[0])
+                        eqn_txt_r  = "".join(eqn_txt.split(splitter)[1])  
+                        user_eqn_r = "".join(user_eqn.split(splitter)[1]) 
+                     ref_eqn_l  = sympify(eqn_txt_l)
+                     ref_expr_l  = srepr(ref_eqn_l)
                      if splitter != "":
-                        user_expr_r = srepr(sympify(user_eqn_r))
+                        ref_eqn_r  = sympify(eqn_txt_r)
+                        ref_expr_r  = srepr(ref_eqn_r)
                      else:
-                        user_expr_r = ""
-                  except SympifyError:
-                     session['context']['color'] = 'orange'
-                     comment_txt += "mistake in equation format (need to use * for all multiplies)"
-                  except Exception as e:
-                     session['context']['color'] = 'orange'
-                     comment_txt += "equation error"
+                        ref_expr_r = ""
+                     try:
+                        user_expr_l = srepr(sympify(user_eqn_l))
+                        if splitter != "":
+                           user_expr_r = srepr(sympify(user_eqn_r))
+                        else:
+                           user_expr_r = ""
+                     except SympifyError:
+                        session['context']['color'] = 'orange'
+                        comment_txt += "mistake in equation format (need to use * for all multiplies)"
+                     except Exception as e:
+                        session['context']['color'] = 'orange'
+                        comment_txt += "equation error"
+                     else:
+                        if (user_expr_l == ref_expr_l) and (user_expr_r == ref_expr_r) :
+                           is_match = True
+                        else:
+                           pass
+                  if is_match:
+                     comment_txt += "equation {0} matches\n".format(user_eqn)
                   else:
-                     if (user_expr_l == ref_expr_l) and (user_expr_r == ref_expr_r) :
-                        is_match = True
-                     else:
-                        pass
-               if is_match:
-                  comment_txt += "equation {0} matches\n".format(user_eqn)
-               else:
+                     session['context']['color'] = 'red'
+                     comment_txt += "equation {0} does not match\n".format(user_eqn)
+               if num_user < num_ref:
                   session['context']['color'] = 'red'
-                  comment_txt += "equation {0} does not match\n".format(user_eqn)
+                  comment_txt += "too few  user equations\n" 
          if req_type == "vectors":
             # Use canvas to create vectors
             if 'vectors' not in session['context']:
