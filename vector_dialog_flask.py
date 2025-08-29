@@ -222,7 +222,10 @@ def dialog():
          if req_type == "expression":
             comment_txt = ""
             user_responses = user_str.splitlines()
-            splitter = obj['splitter']
+            splitter = ""
+            for sp in ['=', '<', '>']:
+               if sp in obj["responses"][0]:
+                  splitter = sp 
             num_user = len(user_responses)
             num_ref  = len(obj["responses"])
             if num_user > num_ref:

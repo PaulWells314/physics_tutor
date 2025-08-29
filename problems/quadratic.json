@@ -9,7 +9,6 @@
    {
       "request": "What is the new equation?",
       "type": "expression",
-      "splitter" : "=",
       "responses": 
       ["x^2 - 2^0.5 * x = 0"]
    },
@@ -21,7 +20,6 @@
    {
       "request": "What is the new equation?",
       "type": "expression",
-      "splitter" : "=",
       "responses": 
       ["x * (x - 2^0.5) = 0"]
    },
@@ -33,14 +31,12 @@
    {
       "request": "What are the new equations?",
       "type": "expression",
-      "splitter" : "=",
       "responses": 
       ["x = 0", "x-2^0.5 = 0"]
    },
    {
       "request": "What are the solutions?",
       "type": "expression",
-      "splitter": "",
       "responses": 
       ["0", "2^0.5"]
    }
