@@ -1,0 +1,55 @@
+{
+   "description": "Solve the equation x^2 = -4",
+   "request_list": [
+   {
+      "request": "What is the first step?",
+      "type": "all",
+      "responses": ["Express right side as the square of an imaginary number"]
+   },
+   {
+      "request": "What is the new equation?",
+      "type": "expression",
+      "responses": 
+      ["x^2 = (2*I)^2"]
+   },
+   {
+      "request": "What is the next step?",
+      "type": "all",
+      "responses": ["Move term on right to left side"]
+   },
+   {
+      "request": "What is the new equation?",
+      "type": "expression",
+      "responses": 
+      ["x^2 - (2*I)^2 = 0"]
+   },
+   {
+      "request": "What is the next step?",
+      "type": "all",
+      "responses": ["Factorize left side of equation"]
+   },
+   {
+      "request": "What is the new equation?",
+      "type": "expression",
+      "responses": 
+      ["(x - 2*I)*(x + 2*I) = 0"]
+   },
+   {
+      "request": "What is the next step?",
+      "type": "all",
+      "responses": ["Set each factor to zero"]
+   },
+   {
+      "request": "What are the new equations?",
+      "type": "expression",
+      "responses": 
+      ["x - 2*I = 0", "x + 2*I = 0"]
+   },
+   {
+      "request": "What are the possible values?",
+      "type": "expression",
+      "responses": 
+      ["2*I", "-2*I"]
+   }
+   ]
+}
