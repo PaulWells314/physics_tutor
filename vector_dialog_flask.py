@@ -27,6 +27,7 @@ def init_context(session):
 def init():
    selected_option =  request.form.get('options')
    session['mode']   =  request.form.get('mode')
+   session.permanent = True
    if request.method == 'POST':
       # Load button
       if request.form.get('submit_button') == "load":
