@@ -35,6 +35,7 @@ def init():
           with open(filename) as fin:
              data = json.load(fin)
              session['data'] = data['request_list'] 
+             session['answers'] = ["" for i in range(len(data['request_list']))]
              session['obj_index'] = 0
              init_context(session)
              session['selected'] = selected_option
@@ -44,7 +45,14 @@ def init():
              # First request 
              if "request" in obj:
                 session['context']['request_txt'] = obj["request"] 
-      session.modified = True
+      # New button
+      if request.form.get('new_button') == "new": 
+         session['answers'] = []
+         session['data']    = []
+         session['obj_index'] = 0
+         session['mode'] = 'teacher'
+         init_context(session) 
+         session.modified = True
       return render_template('index.html', context = session['context'], disp = session['mode'])
    elif request.method == "GET":
       session['obj_index'] = 0
@@ -74,6 +82,7 @@ def dialog():
    if request.method == 'POST':
       if 'data' not in session:
          session['data'] = []
+         session['answers'] = []
          init_context(session)
          session['context']['comment_txt'] = "Problem not loaded: creating from scratch"
          session.modified = True
@@ -108,6 +117,7 @@ def dialog():
             pass
          elif session['obj_index'] < len(session['data']) - 1:
             del(session['data'][session['obj_index']])
+            del(session['answers'][session['obj_index']])
             if len(session['data']) != 0:
                obj = session['data'][session['obj_index']]
                session['context']['request_txt'] = obj["request"]
@@ -116,6 +126,7 @@ def dialog():
             session['context']['comment_txt'] = "" 
          else:
             del(session['data'][session['obj_index']])            
+            del(session['answers'][session['obj_index']])            
             if len(session['data']) != 0:
                session['obj_index'] = session['obj_index'] - 1
                obj = session['data'][session['obj_index']]
@@ -133,6 +144,7 @@ def dialog():
          new_obj["request"] = ""
          new_obj["responses"] = []
          session['data'].insert(session['obj_index'], new_obj)
+         session['answers'].insert(session['obj_index'], "")
          obj = session['data'][session['obj_index']]
          session['context']['request_txt'] = obj["request"]
          session['context']['type'] = new_obj["type"]
@@ -145,6 +157,7 @@ def dialog():
          new_obj["request"] = ""
          new_obj["responses"] = []
          session['data'].append(new_obj)
+         session['answers'].append("")
          session['obj_index'] = len(session['data']) - 1
          obj = session['data'][session['obj_index']]
          session['context']['request_txt'] = obj["request"]
@@ -411,6 +424,8 @@ def dialog():
                   comment_txt = comment_txt + " f2 mismatch"
 
          session['context']['comment_txt'] = comment_txt
+         session['answers'][session['obj_index']] = session['context']['response_txt']
+         print(session['answers'])
          session.modified = True
          return render_template('dialog.html', context = session['context'], disp = disp)
 
