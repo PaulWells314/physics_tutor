@@ -516,3 +516,8 @@ def store():
          out_dict['request_list'] = session['data']
          json.dump(out_dict, json_file, indent=4)
    return render_template('store.html', context = session['context'])
+@app.route('/transcript', methods = ['POST', 'GET'])
+def transcript():
+   if request.method == 'POST':
+      pass
+   return render_template('transcript.html', context = session['answers'])

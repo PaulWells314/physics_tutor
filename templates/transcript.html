@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+form {
+ width: 500px;
+ margin: 0 auto;
+ display: flex;
+ flex-direction: column;
+}
+
+</style>
+</head>
+<body>
+
+<form method = "post">
+<p><a href="{{ url_for('dialog') }}">Dialog</a></p>
+<label>Transcript: </label>
+<textarea name="transcript" rows="32"  cols="80">
+{{ session["answers"] }}
+</textarea>
+</form>
+</body>
+</html>
