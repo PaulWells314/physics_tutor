@@ -424,8 +424,7 @@ def dialog():
                   comment_txt = comment_txt + " f2 mismatch"
 
          session['context']['comment_txt'] = comment_txt
-         session['answers'][session['obj_index']] = session['context']['response_txt']
-         print(session['answers'])
+         session['answers'][session['obj_index']] = session['context']['response_txt'].rstrip()
          session.modified = True
          return render_template('dialog.html', context = session['context'], disp = disp)
 
